@@ -1,0 +1,17 @@
+{
+    "rag": {
+        "corpus_dir": "data/sources",
+        "chroma_dir": "chroma_db",
+        "collection": "voces_evidencia",
+        "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        "chunk_size": 600,
+        "chunk_overlap": 100,
+        "threshold": 0.3
+    },
+    "nlp":{
+        "sentiment": ["positivo", "negativo", "neutro"],
+        "emotion": ["alegria", "tristeza", "enojo", "miedo", "sorpresa", "disgusto", "otro"],
+        "topic": ["bienestar docente","convivencia universitaria","bullying y acoso","xenofobia y discriminación","salud mental","otro"],
+        "intent": ["pedir consejo", "desahogarse", "buscar orientación", "emergencia"]
+    }
+}

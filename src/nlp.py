@@ -1,7 +1,6 @@
 import time
-import logging
 from typing import Literal
-from .config import Settings
+from .config import AGENT_SETTINGS, NLP_SETTINGS
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
@@ -10,33 +9,27 @@ class Analysis(BaseModel):
     """Análisis NLP de un mensaje de un estudiante o docente."""
 
     emotion: Literal[
-        "alegria", "tristeza", "enojo", "miedo", "sorpresa", "disgusto", "otro"
+        tuple(NLP_SETTINGS.emotion)
     ] = Field(description="Emoción predominante que expresa la persona.")
 
-    sentiment: Literal["positivo", "negativo", "neutro"] = Field(
+    sentiment: Literal[NLP_SETTINGS.sentiment] = Field(
         description="Polaridad general del mensaje."
     )
 
     intent: Literal[
-        "pedir consejo", "desahogarse", "buscar orientación", "emergencia"
+        NLP_SETTINGS.intent
     ] = Field(
         description=(
             "pedir consejo: quiere saber qué hacer en una situación. "
             "desahogarse: quiere ser escuchado, sin pedir nada concreto. "
             "buscar orientación: pregunta por canales, protocolos o recursos. "
-            "emergencia: menciona peligro inmediato, autolesión o ideas suicidas "
+            "emergencia: menciona peligro inmediato, autolesión, ideas suicidas "
             "o violencia en curso, propias o de otra persona."
         )
     )
 
-    topic: Literal[
-        "bienestar docente",
-        "convivencia universitaria",
-        "bullying y acoso",
-        "xenofobia y discriminación",
-        "salud mental",
-        "otro",
-    ] = Field(description="Tema principal. Usar 'otro' si no encaja claramente.")
+    topic: Literal[NLP_SETTINGS.topic] = Field(
+        description="Tema principal. Usar 'otro' si no encaja claramente.")
 
     confidence: Literal["alta", "media", "baja"] = Field(
         description="Qué tan seguro estás del análisis. Baja si el mensaje es ambiguo o muy corto."
@@ -58,7 +51,7 @@ prompt = ChatPromptTemplate.from_messages(
     [("system", SYSTEM_PROMPT), ("human", "<mensaje>\n{texto}\n</mensaje>")]
 )
 
-llm = ChatOpenAI(model=Settings.from_env().model, temperature=0, api_key=Settings.from_env().api_key)
+llm = ChatOpenAI(model=AGENT_SETTINGS.model, temperature=0, api_key=AGENT_SETTINGS.api_key)
 analizador = prompt | llm.with_structured_output(Analysis, method="json_schema")
 
 async def analize(texto: str) -> dict:

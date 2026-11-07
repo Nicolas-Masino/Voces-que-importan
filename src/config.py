@@ -1,16 +1,26 @@
-from dataclasses import dataclass
+import json
+from datetime import datetime
+from abc import ABC, abstractmethod
 from pathlib import Path
-import os
-import datetime
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 LOGS_DIR = Path("data/logs")
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
-LOG_DAY = datetime.datetime.now().strftime("%Y-%m-%d")
+LOG_DAY = datetime.now().strftime("%Y-%m-%d")
 LOGFORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 LOGFILE = LOGS_DIR / f"{LOG_DAY}_conversation.log"
 
-@dataclass(frozen=True)
-class Settings:
+# Clase maestra de configuraciones 
+class Settings(BaseSettings, ABC):
+
+    @classmethod
+    @abstractmethod
+    def load(cls):
+        """Método obligatorio para cargar la configuración según la fuente."""
+        pass
+
+# Subclase de configuraciones del agente 
+class AgentSettings(Settings):
     provider: str = "demo"
     model: str = ""
     api_key: str = ""
@@ -19,14 +29,47 @@ class Settings:
     wellbeing_url: str = ""
     emergency_phone: str = ""
 
+    # Configura Pydantic para leer automáticamente un archivo .env
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore"
+    )
+
     @classmethod
-    def from_env(cls) -> "Settings":
-        return cls(
-            provider=os.getenv("LLM_PROVIDER", "demo").lower(),
-            model=os.getenv("LLM_MODEL", ""),
-            api_key=os.getenv("LLM_API_KEY", ""),
-            university_name=os.getenv("UNIVERSITY_NAME", "Tu universidad"),
-            convivencia_url=os.getenv("UNIVERSITY_CONVIVENCIA_URL", ""),
-            wellbeing_url=os.getenv("UNIVERSITY_WELLBEING_URL", ""),
-            emergency_phone=os.getenv("UNIVERSITY_EMERGENCY_PHONE", ""),
-        )
+    def load(cls) -> "AgentSettings":
+        return cls()
+
+# Subclase de configuraciones para RAG (Recuperación de Información)
+class RAGSettings(Settings):
+    corpus_dir: str = "data/sources"
+    chroma_dir:str 
+    collection: str
+    embedding_model: str
+    chunk_size: int
+    chunk_overlap: int
+    threshold: float
+
+    @classmethod
+    def load(cls, json_path: str = "config.json") -> "RAGSettings":
+        raw_data = Path(json_path).read_text(encoding="utf-8")
+        data = json.loads(raw_data)
+        return cls(**data.get('rag', {}))
+
+# Subclase de configuración para el análisis de NLP
+class NLPSettings(Settings):
+    sentiment: list
+    emotion: list
+    intent: list
+    topic: list
+
+    @classmethod
+    def load(cls, json_path: str = "config.json") -> "NLPSettings":
+        raw_data = Path(json_path).read_text(encoding="utf-8")
+        data = json.loads(raw_data)
+        return cls(**data.get('nlp', {}))
+
+
+AGENT_SETTINGS = AgentSettings.load()
+RAG_SETTINGS = RAGSettings.load()
+NLP_SETTINGS = NLPSettings.load()
