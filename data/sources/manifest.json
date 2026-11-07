@@ -1,0 +1,139 @@
+{
+  "oms_comunicacion_responsable_suicidio_2023.pdf": {
+    "fuente": "OMS/OPS - Prevención del suicidio: un recurso para profesionales de los medios de comunicación (actualización 2023)",
+    "anio": 2023,
+    "pais": "Internacional",
+    "region": "Global",
+    "url": "https://www.paho.org/es/documentos/prevencion-suicidio-recurso-para-profesionales-medios-comunicacion-actualizacion-2023",
+    "url_pdf": "https://infocop.es/wp-content/uploads/2024/09/9789275327791_spa.pdf",
+    "doi": "10.37774/9789275327791",
+    "topicos": ["salud mental"]
+  },
+  "oit_violencia_acoso_educacion.pdf": {
+    "fuente": "OIT - Violencia y acoso en educación (COMPLETAR el título exacto del PDF descargado)",
+    "anio": 2024,
+    "pais": "Internacional",
+    "region": "Global",
+    "url": "https://www.ilo.org/es/publications/directrices-sobre-la-prevencion-y-eliminacion-de-la-violencia-y-el-acoso-en",
+    "topicos": ["bullying y acoso", "convivencia universitaria", "bienestar docente"]
+  },
+  "unesco_iesalc_condiciones_personal.pdf": {
+    "fuente": "UNESCO-IESALC - Las instituciones de educación superior como empleadoras: garantizando condiciones de trabajo dignas",
+    "anio": 2024,
+    "pais": "Internacional",
+    "region": "Global",
+    "url": "https://www.iesalc.unesco.org",
+    "topicos": ["bienestar docente", "bullying y acoso"]
+  },
+  "oit_experiencias_violencia_acoso_trabajo_2023.pdf": {
+    "fuente": "OIT / Fundación Lloyd's Register / Gallup - Experiencias de violencia y acoso en el trabajo: primera encuesta mundial",
+    "anio": 2023,
+    "pais": "Internacional",
+    "region": "Global",
+    "url": "https://www.ilo.org/global/publications/WCMS_863095/lang--es/index.htm",
+    "url_pdf": "https://archivos.juridicas.unam.mx/www/bjv/libros/16/7603/1a.pdf",
+    "doi": "10.54394/TGKC5288",
+    "topicos": ["bullying y acoso", "bienestar docente"],
+    "nota": "El PDF en español es una copia alojada por la UNAM (edición 2023)."
+  },
+  "oit_c190_eliminar_violencia_acoso.pdf": {
+    "fuente": "OIT - Eliminar la violencia y el acoso en el mundo del trabajo (Convenio 190 y Recomendación 206)",
+    "anio": 2019,
+    "pais": "Internacional",
+    "region": "Global",
+    "url": "https://cig.gov.pt/wp-content/uploads/2019/11/ELIMINAR-VIOLENCIA-C190.pdf",
+    "url_pdf": "https://cig.gov.pt/wp-content/uploads/2019/11/ELIMINAR-VIOLENCIA-C190.pdf",
+    "topicos": ["bullying y acoso", "bienestar docente", "convivencia universitaria"]
+  },
+  "uba_protocolo_violencia_genero_2015.pdf": {
+    "fuente": "Universidad de Buenos Aires - Protocolo de intervención institucional ante denuncias por violencia de género, acoso sexual y discriminación (Res. CS 4043/15 y modificatorias)",
+    "anio": 2015,
+    "pais": "Argentina",
+    "region": "América Latina",
+    "url": "https://uba.ar/protocolo-genero",
+    "url_pdf": "https://ifibio-uba.conicet.gov.ar/wp-content/uploads/sites/81/2024/09/Protocolo-UBA-violencia-de-genero.pdf",
+    "topicos": ["convivencia universitaria", "bullying y acoso", "xenofobia y discriminación"],
+    "nota": "Protocolo de género. No cubre todo tipo de acoso entre pares."
+  },
+  "unlu_protocolo_violencia_genero_2022.pdf": {
+    "fuente": "Universidad Nacional de Luján - Protocolo y procedimiento de actuación ante violencia de género y/o discriminación (Res. HCS 581/22)",
+    "anio": 2022,
+    "pais": "Argentina",
+    "region": "América Latina",
+    "url": "https://www.serviciosocial.unlu.edu.ar/sites/www.serviciosocial.unlu.edu.ar/files/site/RES_HCS_N%C2%BA_581_22_Anexo_Protocolo%20VG%20UNLu%202022_Procedimiento.pdf",
+    "url_pdf": "https://www.serviciosocial.unlu.edu.ar/sites/www.serviciosocial.unlu.edu.ar/files/site/RES_HCS_N%C2%BA_581_22_Anexo_Protocolo%20VG%20UNLu%202022_Procedimiento.pdf",
+    "topicos": ["convivencia universitaria", "bullying y acoso", "xenofobia y discriminación"]
+  },
+  "unav_protocolo_acoso_entre_estudiantes_2025.pdf": {
+    "fuente": "Universidad de Navarra - Protocolo de prevención y actuación ante el acoso entre los estudiantes",
+    "anio": 2025,
+    "pais": "España",
+    "region": "Europa",
+    "url": "https://ncid.unav.es/documents/10162/143624431/protocolo-de-prevencion-y-actuacion-ante-el-acoso-entre-los-estudiantes.pdf",
+    "url_pdf": "https://ncid.unav.es/documents/10162/143624431/protocolo-de-prevencion-y-actuacion-ante-el-acoso-entre-los-estudiantes.pdf",
+    "topicos": ["bullying y acoso", "convivencia universitaria"],
+    "nota": "Fuente de otro país: sirve para comparar, no para derivar usuarios argentinos."
+  },
+  "resett_putallaz_cyberbullying_universitarios_2018.pdf": {
+    "fuente": "Resett & Putallaz - Cybervictimización y cyberagresión en estudiantes universitarios (Psicodebate 18(2))",
+    "anio": 2018,
+    "pais": "Argentina",
+    "region": "América Latina",
+    "url": "https://repositorio.uca.edu.ar/handle/123456789/9288",
+    "url_pdf": "https://repositorio.uca.edu.ar/bitstream/123456789/9288/1/cybervictimizacion-cyberagresion-estudiantes.pdf",
+    "doi": "10.18682/pd.v18i2.811",
+    "topicos": ["bullying y acoso", "salud mental"],
+    "nota": "Muestra de 410 estudiantes de universidades privadas de Paraná (Entre Ríos). No generalizable a todo el país."
+  },
+  "guizardi_mardones_xenofobia_foz_2020.pdf": {
+    "fuente": "Guizardi & Mardones - Las configuraciones locales de odio: discursos antimigratorios y prácticas xenofóbicas en Foz de Iguazú, Brasil (Estudios Fronterizos 21, e045)",
+    "anio": 2020,
+    "pais": "Brasil",
+    "region": "América Latina",
+    "url": "https://doi.org/10.21670/ref.2003045",
+    "url_pdf": "https://ref.uabc.mx/ojs/index.php/ref/article/download/840/1729?inline=1",
+    "doi": "10.21670/ref.2003045",
+    "topicos": ["xenofobia y discriminación", "convivencia universitaria"],
+    "nota": "Estudio etnográfico cualitativo (60 entrevistas y 1 grupo focal, UNILA). Describe, no cuantifica."
+  },
+  "inadi_mapa_discriminacion_2019.pdf": {
+    "fuente": "INADI - Mapa Nacional de la Discriminación (3.ª edición)",
+    "anio": 2019,
+    "pais": "Argentina",
+    "region": "América Latina",
+    "url": "https://www.argentina.gob.ar/node/318246",
+    "url_pdf": "https://www.argentina.gob.ar/sites/default/files/2022/06/mapa_nacional_de_la_discriminacion.pdf",
+    "topicos": ["xenofobia y discriminación", "convivencia universitaria"],
+    "nota": "Fuente estadística histórica. Verificar la vigencia institucional del INADI antes de derivar a sus canales."
+  },
+  "who_suicide_worldwide_2021.pdf": {
+    "fuente": "OMS - Suicide worldwide in 2021: global health estimates",
+    "anio": 2025,
+    "pais": "Internacional",
+    "region": "Global",
+    "url": "https://www.who.int/publications/i/item/9789240110069",
+    "topicos": ["salud mental"],
+    "nota": "En inglés. Cifras generales (727.000 muertes en 2021), no por ocupación."
+  },
+  "badellino_salud_mental_universitarios_argentina_2025.pdf": {
+    "fuente": "Badellino, Gobbo & Torres - Efectos psicológicos y sociales en estudiantes universitarios bajo cuarentena prolongada (Rev. Colomb. Psiquiatr. 54(1))",
+    "anio": 2025,
+    "pais": "Argentina",
+    "region": "América Latina",
+    "url": "https://ri.conicet.gov.ar/handle/11336/234524",
+    "url_pdf": "https://www.elsevier.es/es-revista-revista-colombiana-psiquiatria-379-pdf-download-S0034745023001099",
+    "topicos": ["salud mental"],
+    "nota": "Encuesta por redes sociales (1.711 estudiantes) durante la cuarentena: muestra no probabilística."
+  },
+  "mahecha_burnout_docentes_universitarios_2023.pdf": {
+    "fuente": "Mahecha-Naranjo et al. - Caracterización del síndrome del agotamiento psicológico en profesores universitarios de América Latina: una revisión bibliográfica (Duazary 20(3))",
+    "anio": 2023,
+    "pais": "América Latina",
+    "region": "América Latina",
+    "url": "https://doi.org/10.21676/2389783X.5446",
+    "url_pdf": "https://dialnet.unirioja.es/descarga/articulo/9141256.pdf",
+    "doi": "10.21676/2389783X.5446",
+    "topicos": ["bienestar docente", "salud mental"],
+    "nota": "Revisión de estudios publicados entre 2015 y 2019."
+  }
+}
