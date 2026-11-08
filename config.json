@@ -8,10 +8,56 @@
         "chunk_overlap": 100,
         "threshold": 0.3
     },
-    "nlp":{
-        "sentiment": ["positivo", "negativo", "neutro"],
-        "emotion": ["alegria", "tristeza", "enojo", "miedo", "sorpresa", "disgusto", "otro"],
-        "topic": ["bienestar docente","convivencia universitaria","bullying y acoso","xenofobia y discriminación","salud mental","otro"],
-        "intent": ["pedir consejo", "desahogarse", "buscar orientación", "emergencia"]
+    "topic": ["bienestar docente","convivencia universitaria","bullying y acoso","xenofobia y discriminación","salud mental","otro"],
+    "resources": {
+        "linea 135":{
+            "name": "Línea 135", 
+            "description": "Asistencia en crisis de la Ciudad de Buenos Aires y Gran Buenos Aires.", 
+            "url": "https://www.asistenciaalsuicida.org.ar/", 
+            "scope": "Argentina",
+            "topic": ["salud mental"]
+        },
+        "linea 0800-345-1435":{
+            "name": "Línea 0800-345-1435", 
+            "description": "Centro de Asistencia al Suicida para otras localidades.", 
+            "url": "https://www.asistenciaalsuicida.org.ar/", 
+            "scope": "Argentina",
+            "topic": ["salud mental"]
+        },
+        "linea 144":{
+            "name": "Línea 144", 
+            "description": "Atención a personas en situación de violencia de género.", 
+            "url": "https://www.argentina.gob.ar/linea-144", 
+            "scope": "Argentina",
+            "topic": ["bullying y acoso"]
+        },
+        "linea 911":{
+            "name": "Línea 911", 
+            "description": "Emergencias policiales.", 
+            "url": "https://www.argentina.gob.ar/tema/emergencias", 
+            "scope": "Argentina",
+            "topic": ["otro"]
+        },
+        "linea 107":{
+            "name": "Línea 107", 
+            "description": "Emergencias médicas.", 
+            "url": "https://www.argentina.gob.ar/tema/emergencias", 
+            "scope": "Argentina",
+            "topic": ["otro"]
+        },
+        "linea 100":{
+            "name": "Línea 100", 
+            "description": "Bomberos.", 
+            "url": "https://www.argentina.gob.ar/tema/emergencias", 
+            "scope": "Argentina",
+            "topic": ["otro"]
+        },
+        "linea 103":{
+            "name": "Línea 103", 
+            "description": "Emergencias de Defensa Civil.", 
+            "url": "https://www.argentina.gob.ar/tema/emergencias", 
+            "scope": "Argentina",
+            "topic": ["otro"]
+        }
     }
 }

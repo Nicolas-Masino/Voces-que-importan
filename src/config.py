@@ -10,6 +10,8 @@ LOG_DAY = datetime.now().strftime("%Y-%m-%d")
 LOGFORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 LOGFILE = LOGS_DIR / f"{LOG_DAY}_conversation.log"
 
+CONFIG_FILE = Path("config.json")
+
 # Clase maestra de configuraciones 
 class Settings(BaseSettings, ABC):
 
@@ -24,16 +26,13 @@ class AgentSettings(Settings):
     provider: str = "demo"
     model: str = ""
     api_key: str = ""
-    university_name: str = "Tu universidad"
-    convivencia_url: str = ""
-    wellbeing_url: str = ""
-    emergency_phone: str = ""
 
     # Configura Pydantic para leer automáticamente un archivo .env
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        extra="ignore"
+        extra="ignore",
+        env_prefix="LLM_"
     )
 
     @classmethod
@@ -51,25 +50,10 @@ class RAGSettings(Settings):
     threshold: float
 
     @classmethod
-    def load(cls, json_path: str = "config.json") -> "RAGSettings":
+    def load(cls, json_path: str = CONFIG_FILE) -> "RAGSettings":
         raw_data = Path(json_path).read_text(encoding="utf-8")
         data = json.loads(raw_data)
         return cls(**data.get('rag', {}))
 
-# Subclase de configuración para el análisis de NLP
-class NLPSettings(Settings):
-    sentiment: list
-    emotion: list
-    intent: list
-    topic: list
-
-    @classmethod
-    def load(cls, json_path: str = "config.json") -> "NLPSettings":
-        raw_data = Path(json_path).read_text(encoding="utf-8")
-        data = json.loads(raw_data)
-        return cls(**data.get('nlp', {}))
-
-
 AGENT_SETTINGS = AgentSettings.load()
 RAG_SETTINGS = RAGSettings.load()
-NLP_SETTINGS = NLPSettings.load()

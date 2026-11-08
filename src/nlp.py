@@ -1,23 +1,30 @@
 import time
+import json
+from pathlib import Path
 from typing import Literal
-from .config import AGENT_SETTINGS, NLP_SETTINGS
+from .config import AGENT_SETTINGS, CONFIG_FILE
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
+
+# Cargar los topicos de NLP desde el archivo JSON
+with Path.open(CONFIG_FILE, "r", encoding="utf-8") as f:
+    data = json.load(f)
+    topics = data.get("topic", [])
 
 class Analysis(BaseModel):
     """Análisis NLP de un mensaje de un estudiante o docente."""
 
     emotion: Literal[
-        tuple(NLP_SETTINGS.emotion)
+        "alegria", "tristeza", "enojo", "miedo", "sorpresa", "disgusto", "otro"
     ] = Field(description="Emoción predominante que expresa la persona.")
 
-    sentiment: Literal[NLP_SETTINGS.sentiment] = Field(
+    sentiment: Literal["positivo", "negativo", "neutro"] = Field(
         description="Polaridad general del mensaje."
     )
 
     intent: Literal[
-        NLP_SETTINGS.intent
+        "pedir consejo", "desahogarse", "buscar orientación", "emergencia"
     ] = Field(
         description=(
             "pedir consejo: quiere saber qué hacer en una situación. "
@@ -28,13 +35,12 @@ class Analysis(BaseModel):
         )
     )
 
-    topic: Literal[NLP_SETTINGS.topic] = Field(
+    topic: Literal[tuple(topics)] = Field(
         description="Tema principal. Usar 'otro' si no encaja claramente.")
 
     confidence: Literal["alta", "media", "baja"] = Field(
         description="Qué tan seguro estás del análisis. Baja si el mensaje es ambiguo o muy corto."
     )
-
 
 SYSTEM_PROMPT = """Sos un analizador de lenguaje para un asistente de acompañamiento universitario.
 Clasificá el mensaje del usuario según el esquema pedido.
