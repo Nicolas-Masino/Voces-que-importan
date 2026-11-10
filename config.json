@@ -14,49 +14,84 @@
             "name": "Línea 135", 
             "description": "Asistencia en crisis de la Ciudad de Buenos Aires y Gran Buenos Aires.", 
             "url": "https://www.asistenciaalsuicida.org.ar/", 
-            "scope": "Argentina",
+            "scope": "nacional",
             "topic": ["salud mental"]
         },
         "linea 0800-345-1435":{
             "name": "Línea 0800-345-1435", 
             "description": "Centro de Asistencia al Suicida para otras localidades.", 
             "url": "https://www.asistenciaalsuicida.org.ar/", 
-            "scope": "Argentina",
+            "scope": "nacional",
             "topic": ["salud mental"]
         },
         "linea 144":{
             "name": "Línea 144", 
             "description": "Atención a personas en situación de violencia de género.", 
             "url": "https://www.argentina.gob.ar/linea-144", 
-            "scope": "Argentina",
+            "scope": "nacional",
             "topic": ["bullying y acoso"]
         },
         "linea 911":{
             "name": "Línea 911", 
             "description": "Emergencias policiales.", 
             "url": "https://www.argentina.gob.ar/tema/emergencias", 
-            "scope": "Argentina",
+            "scope": "internacional",
             "topic": ["otro"]
         },
         "linea 107":{
             "name": "Línea 107", 
             "description": "Emergencias médicas.", 
             "url": "https://www.argentina.gob.ar/tema/emergencias", 
-            "scope": "Argentina",
+            "scope": "nacional",
             "topic": ["otro"]
         },
         "linea 100":{
             "name": "Línea 100", 
             "description": "Bomberos.", 
             "url": "https://www.argentina.gob.ar/tema/emergencias", 
-            "scope": "Argentina",
+            "scope": "nacional",
             "topic": ["otro"]
         },
         "linea 103":{
             "name": "Línea 103", 
             "description": "Emergencias de Defensa Civil.", 
             "url": "https://www.argentina.gob.ar/tema/emergencias", 
-            "scope": "Argentina",
+            "scope": "nacional",
+            "topic": ["otro"]
+        },
+        "convivencia":{
+            "name": "Universidad Católica Argentina - Canal de convivencia institucional",
+            "description": "Canal de convivencia institucional de la universidad.",
+            "url": "https://wadmin.uca.edu.ar/public/ckeditor/Departamento%20de%20Alumnos/2019-Reglamento-de-Normas-de-Convivencia-de-la-Vida-Universitaria.pdf",
+            "scope": "institucional",
+            "topic": ["convivencia universitaria"]
+        },
+        "telefono":{
+            "name": "Universidad Católica Argentina",
+            "description": "Linea telefonica de la universidad.",
+            "url": "tel:0810-2200-822",
+            "scope": "institucional",
+            "topic": ["otro"]
+        },
+        "estudiantes":{
+            "name": "Universidad Católica Argentina - Portal de estudiantes",
+            "description": "Portal de estudiantes de la universidad.",
+            "url": "https://uca.edu.ar/es/institucional/alumnos",
+            "scope": "institucional",
+            "topic": ["otro"]
+        },
+        "docentes":{
+            "name": "Universidad Católica Argentina - Portal de docentes",
+            "description": "Portal de docentes de la universidad.",
+            "url": "https://uca.edu.ar/es/acceso-a-docentes",
+            "scope": "institucional",
+            "topic": ["bienestar docente"]
+        },
+        "graduados":{
+            "name": "Universidad Católica Argentina - Portal de graduados",
+            "description": "Portal de graduados de la universidad.",
+            "url": "https://uca.edu.ar/es/institucional/graduados",
+            "scope": "institucional",
             "topic": ["otro"]
         }
     }
