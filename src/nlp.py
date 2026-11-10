@@ -1,16 +1,9 @@
 import time
-import json
-from pathlib import Path
 from typing import Literal
-from .config import AGENT_SETTINGS, CONFIG_FILE
+from .config import AGENT_SETTINGS, TOPICS
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
-
-# Cargar los topicos de NLP desde el archivo JSON
-with Path.open(CONFIG_FILE, "r", encoding="utf-8") as f:
-    data = json.load(f)
-    topics = data.get("topic", [])
 
 class Analysis(BaseModel):
     """Análisis NLP de un mensaje de un estudiante o docente."""
@@ -35,7 +28,7 @@ class Analysis(BaseModel):
         )
     )
 
-    topic: Literal[tuple(topics)] = Field(
+    topic: Literal[tuple(TOPICS)] = Field(
         description="Tema principal. Usar 'otro' si no encaja claramente.")
 
     confidence: Literal["alta", "media", "baja"] = Field(

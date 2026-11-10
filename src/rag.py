@@ -18,7 +18,7 @@ import json
 import re
 import unicodedata
 from pathlib import Path
-from .config import RAG_SETTINGS, NLP_SETTINGS, LOGFILE, LOGFORMAT
+from .config import RAG_SETTINGS, LOGFILE, LOGFORMAT, TOPICS
 from typing import Literal, Dict
 from pydantic import BaseModel, RootModel, Field
 
@@ -51,7 +51,7 @@ class MetadataSchema(BaseModel):
     pais: str = Field(..., description="País de origen del documento")
     region: str = Field(..., description="Región geográfica del documento")
     url: str = Field(..., description="URL de referencia del documento")
-    topicos: Literal[tuple(NLP_SETTINGS.topic)] = Field(..., description="Lista de tópicos asociados al documento")
+    topicos: Literal[tuple(TOPICS)] = Field(..., description="Lista de tópicos asociados al documento")
 
 class ManifestSchema(RootModel[Dict[str, MetadataSchema]]):
     """Esquema para validar el manifest.json del corpus de documentos."""
@@ -110,7 +110,7 @@ def ingestar() -> None:
             continue
 
         # Si todos los topicos del documento están fuera de la lista, se omite su ingesta
-        if not any(t in NLP_SETTINGS.topic for t in meta["topicos"]):
+        if not any(t in TOPICS for t in meta["topicos"]):
             logger.warning(f"{nombre} no tiene tópicos válidos, se omite.")
             continue
 
@@ -127,7 +127,7 @@ def ingestar() -> None:
                 "topicos": " | ".join(meta["topicos"]),  # para mostrar
                 "chunk_id": f"{nombre}-{i}",
                 # Chroma no admite listas en metadatos: un booleano por tópico
-                **{flag(t): (t in meta["topicos"]) for t in NLP_SETTINGS.topic},
+                **{flag(t): (t in meta["topicos"]) for t in TOPICS},
             }
             chunks.append(ch)
 
@@ -162,7 +162,7 @@ def buscar_evidencia(consulta: str, topico: str | None = None, k: int = 4) -> di
 
     filtro_aplicado = False
     resultados = []
-    if topico and topico in NLP_SETTINGS.topic:
+    if topico and topico in TOPICS:
         resultados = _buscar({flag(topico): True})
         filtro_aplicado = True
     if len(resultados) < 1:  # filtro vacío o muy escaso

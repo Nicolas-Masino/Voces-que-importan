@@ -11,6 +11,10 @@ LOGFORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 LOGFILE = LOGS_DIR / f"{LOG_DAY}_conversation.log"
 
 CONFIG_FILE = Path("config.json")
+# Cargar los topicos de NLP desde el archivo JSON
+with Path.open(CONFIG_FILE, "r", encoding="utf-8") as f:
+    data = json.load(f)
+    TOPICS = data.get("topic", [])
 
 # Clase maestra de configuraciones 
 class Settings(BaseSettings, ABC):
