@@ -30,6 +30,7 @@ class AgentSettings(Settings):
     provider: str = "demo"
     model: str = ""
     api_key: str = ""
+    context_window: int = 8  # Tamaño de la ventana de contexto en turnos de conversación (pares de mensajes)
 
     # Configura Pydantic para leer automáticamente un archivo .env
     model_config = SettingsConfigDict(
