@@ -23,6 +23,9 @@ async def main(msg: cl.Message) -> None:
     agent = cl.user_session.get("agent")
     if not isinstance(agent, ConversationalAgent):
         logger.error("No se pudo inicializar la sesión del agente.")
+        await cl.ErrorMessage(
+            content="Hubo un error al iniciar la sesión del agente. Por favor, recargá la página."
+        ).send()
         raise RuntimeError("No se pudo inicializar la sesión del agente.")
     
     # atrapar errores en el agente y responder con un mensaje genérico
@@ -30,5 +33,8 @@ async def main(msg: cl.Message) -> None:
         response = await agent.respond(msg.content)
     except Exception as e:
         logger.error(f"Error en la consulta: {e}")
-        raise RuntimeError(f"Error en la consulta: {e}")
+        await cl.ErrorMessage(
+            content=f"Ocurrio un error en la consulta {e}"
+        ).send()
+        raise e
     await cl.Message(content=response).send()

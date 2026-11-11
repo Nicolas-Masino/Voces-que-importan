@@ -42,7 +42,8 @@ REGLAS DE ORO ESTRICTAS QUE DEBES CUMPLIR:
 def _form_system(a: dict, resources: list[str] | None, scope: str | None, evidence: str | None) -> str:
     extra = []
     extra.append(f"El análisis preliminar detectó el eje temático: **{a.get('topic', 'No especificado')}** con intención de **{a.get('intent', 'No especificada')}**.")
-    extra.append(f"Evidencia relevante: {evidence}")
+    if evidence:
+        extra.append(f"Evidencia relevante: {evidence}")
     if TONES.get(a.get("emotion")):
         extra.append(f"Tono sugerido: {TONES[a.get('emotion')]}")
     if a.get("intent") == "desahogarse":
@@ -86,20 +87,20 @@ class ConversationalAgent:
             return _safe_response(safety)
 
         # 2. Realizar analisis de NLP y evaluar seguridad en contexto
-        analysis = analizar_situacion.ainvoke({"text": message})
+        analysis = await analizar_situacion.ainvoke({"text": message})
         logger.info(f"Análisis de la situación: {analysis}")
         safety = safety_from_llm(analysis=analysis)
         if safety.level == "urgent":
             return _safe_response(safety)
 
         # 3. Ejecutar herramientas
-        evidence = None
+        evidence = {}
         resources = None
         if analysis.get("intent") == "pedir consejo":
-            evidence = consultar_evidencia.ainvoke({"consulta": message, "topico": analysis.get("topic")})
+            evidence = await consultar_evidencia.ainvoke({"consulta": message, "topico": analysis.get("topic")})
             logger.info(f"Evidencia encontrada: {evidence.get('results')}")
         if analysis.get("intent") == "buscar orientación":
-            resources = orientar_recursos.ainvoke({"topico": analysis.get("topic"), "ambito": analysis.get("scope")})
+            resources = await orientar_recursos.ainvoke({"topico": analysis.get("topic"), "ambito": analysis.get("scope")})
             logger.info(f"Recursos encontrados: {resources}")
 
         # 3. Construir el System Prompt ético y guía para el modelo
@@ -107,7 +108,7 @@ class ConversationalAgent:
         logger.info(f"System Prompt generado: {system_prompt}")
 
         prompt = ChatPromptTemplate.from_messages(
-            [("system", "{system_prompt}"), 
+            [("system", "{system}"), 
              MessagesPlaceholder(variable_name="history"), 
              ("human", "{text}")]
         )
@@ -135,7 +136,7 @@ class ConversationalAgent:
         # 7. Actualizar historial de la sesión y métricas
         self.history.append({"role": "user", "content": message})
         self.history.append({"role": "assistant", "content": response})
-        self.metrics.observe(started_at, urgent=False, evidence_hits=len(evidence.get("results")))
+        self.metrics.observe(started_at, urgent=False, evidence_hits=len(evidence.get("results", [])))
         logger.info(f"Respuesta generada: {response}")
         logger.info(f"Metricas actualizadas: {self.metrics}")
 
