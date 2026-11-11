@@ -28,6 +28,17 @@ class Analysis(BaseModel):
         )
     )
 
+    scope: Literal["internacional", "nacional", "provincial", "local", "institucional"] | None = Field(
+        description=(
+            "Alcance geográfico de la situación. "
+            "Institucional: dentro de la universidad. "
+            "Local: ciudad o barrio. "
+            "Provincial: departamento o provincia. "
+            "Nacional: país. "
+            "Internacional: fuera del país."
+        )
+    )
+
     topic: Literal[tuple(TOPICS)] = Field(
         description="Tema principal. Usar 'otro' si no encaja claramente.")
 
@@ -56,4 +67,4 @@ analizador = prompt | llm.with_structured_output(Analysis, method="json_schema")
 async def analize(texto: str) -> dict:
     t0 = time.perf_counter()
     resultado = await analizador.ainvoke({"texto": texto})
-    return {**resultado.model_dump(), "time": round((time.perf_counter() - t0) * 1000)}
+    return {**resultado.model_dump(), "latency_ms": round((time.perf_counter() - t0) * 1000)}
