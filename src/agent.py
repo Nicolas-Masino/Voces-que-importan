@@ -6,7 +6,6 @@ from .config import AgentSettings, LOGFILE, LOGFORMAT
 from .metrics import Metrics
 from .safety import safety_from_llm, safety_from_re
 from .tools import analizar_situacion, consultar_evidencia, orientar_recursos
-from .nlp import Analysis
 from time import perf_counter
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -87,7 +86,7 @@ class ConversationalAgent:
             return _safe_response(safety)
 
         # 2. Realizar analisis de NLP y evaluar seguridad en contexto
-        analysis = await analizar_situacion(message)
+        analysis = analizar_situacion.ainvoke({"text": message})
         logger.info(f"Análisis de la situación: {analysis}")
         safety = safety_from_llm(analysis=analysis)
         if safety.level == "urgent":
@@ -97,10 +96,10 @@ class ConversationalAgent:
         evidence = None
         resources = None
         if analysis.get("intent") == "pedir consejo":
-            evidence = consultar_evidencia(message, analysis.get("topic"))
-            logger.info(f"Evidencia encontrada: {evidence.get("results")}")
+            evidence = consultar_evidencia.ainvoke({"consulta": message, "topico": analysis.get("topic")})
+            logger.info(f"Evidencia encontrada: {evidence.get('results')}")
         if analysis.get("intent") == "buscar orientación":
-            resources = orientar_recursos(analysis.get("topic"), None)
+            resources = orientar_recursos.ainvoke({"topico": analysis.get("topic"), "ambito": analysis.get("scope")})
             logger.info(f"Recursos encontrados: {resources}")
 
         # 3. Construir el System Prompt ético y guía para el modelo
