@@ -111,7 +111,7 @@ def test_tools_format_evidence_and_resources(monkeypatch):
     monkeypatch.setattr(
         "src.tools.buscar_evidencia",
         lambda *_args: {
-            "resultados": [
+            "results": [
                 {
                     "texto": "Un fragmento verificable.",
                     "fuente": "Fuente de prueba",
@@ -124,8 +124,9 @@ def test_tools_format_evidence_and_resources(monkeypatch):
         },
     )
     evidence = consultar_evidencia.invoke({"consulta": "conflicto"})
-    assert "Fuente de prueba (2024), p. 2" in evidence
-    assert "Un fragmento verificable." in evidence
+    assert "Fuente de prueba (2024), p. 2" in evidence["content"]
+    assert "Un fragmento verificable." in evidence["content"]
+    assert len(evidence["results"]) == 1
 
     resources = orientar_recursos.invoke(
         {"topico": "convivencia universitaria", "ambito": "institucional"}

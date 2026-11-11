@@ -38,7 +38,10 @@ def test_agent_orchestrates_analysis_tools_and_model(monkeypatch):
 
     def fake_evidence(_message, topic):
         calls["topic"] = topic
-        return "Evidencia de prueba"
+        return {
+            "results": [{"texto": "Evidencia de prueba"}],
+            "content": "Evidencia de prueba",
+        }
 
     class FakePrompt:
         def __or__(self, _llm):
