@@ -64,7 +64,7 @@ prompt = ChatPromptTemplate.from_messages(
 llm = ChatOpenAI(model=AGENT_SETTINGS.model, temperature=0, api_key=AGENT_SETTINGS.api_key)
 analizador = prompt | llm.with_structured_output(Analysis, method="json_schema")
 
-async def analize(texto: str) -> dict:
+async def analyze(texto: str) -> dict:
     t0 = time.perf_counter()
     resultado = await analizador.ainvoke({"texto": texto})
     return {**resultado.model_dump(), "latency_ms": round((time.perf_counter() - t0) * 1000)}

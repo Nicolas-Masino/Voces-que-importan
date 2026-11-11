@@ -46,7 +46,7 @@ class AgentSettings(Settings):
 
 # Subclase de configuraciones para RAG (Recuperación de Información)
 class RAGSettings(Settings):
-    corpus_dir: str = "data/sources"
+    corpus_dir: Path = Path("data/sources")
     chroma_dir:str 
     collection: str
     embedding_model: str

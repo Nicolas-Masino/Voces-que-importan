@@ -51,7 +51,7 @@ class MetadataSchema(BaseModel):
     pais: str = Field(..., description="País de origen del documento")
     region: str = Field(..., description="Región geográfica del documento")
     url: str = Field(..., description="URL de referencia del documento")
-    topicos: Literal[tuple(TOPICS)] = Field(..., description="Lista de tópicos asociados al documento")
+    topicos: list[Literal[tuple(TOPICS)]] = Field(..., description="Lista de tópicos asociados al documento")
 
 class ManifestSchema(RootModel[Dict[str, MetadataSchema]]):
     """Esquema para validar el manifest.json del corpus de documentos."""
@@ -170,7 +170,7 @@ def buscar_evidencia(consulta: str, topico: str | None = None, k: int = 4) -> di
         filtro_aplicado = False
 
     logger.info(f"Consulta: {consulta} | Tópico: {topico} | Resultados: {len(resultados)} | Filtro aplicado: {filtro_aplicado}")
-    return {"resultados": resultados, "filtro_aplicado": filtro_aplicado}
+    return {"results": resultados, "filtro_aplicado": filtro_aplicado}
 
 
 def formatear_cita(r: dict) -> str:
@@ -192,5 +192,5 @@ if __name__ == "__main__":
     else:
         res = buscar_evidencia(args.texto, args.topico)
         print(f"Filtro por tópico aplicado: {res['filtro_aplicado']}\n")
-        for r in res["resultados"]:
+        for r in res["results"]:
             print(f"[{r['relevancia']}] {formatear_cita(r)}\n{r['texto'][:300]}...\n")

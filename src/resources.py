@@ -13,9 +13,9 @@ class Resource(BaseModel):
     description: str = Field(..., description="Descripción del recurso")
     url: str = Field(..., description="URL del recurso")
     scope: Literal["internacional", "nacional", "provincial", "local", "institucional"] = Field(..., description="Alcance del recurso")
-    topic: Literal[tuple(TOPICS)] = Field(..., description="Tópico del recurso")
+    topic: list[Literal[tuple(TOPICS)]] = Field(..., description="Tópico del recurso")
 
-RESOURCES = [Resource(**res) for res in resources_dict]
+RESOURCES = [Resource(**res) for res in resources_dict.values()]
 SORTED_SCOPES = ["internacional", "nacional", "provincial", "local", "institucional"]
 
 def _prioridad_scope(r: Resource, ambito: str | None) -> int:
@@ -60,7 +60,7 @@ def buscar_recursos(
     if not res:
         # no hay recursos para este tópico, caemos a los generales ("otro")
         flag_topico = False
-        res = [r for r in RESOURCES if r.topic == "otro"]
+        res = [r for r in RESOURCES if "otro" in r.topic]
  
     flag_ambito = False
     if ambito:
