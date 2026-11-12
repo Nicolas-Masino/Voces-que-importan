@@ -1,6 +1,7 @@
 import pytest
 
 from src.config import AgentSettings, RAGSettings
+from src.empathy import EmpathyCriterion, EmpathyEvaluation, EmpathyLab
 from src.metrics import Metrics
 from src.nlp import Analysis
 from src.rag import flag, formatear_cita, slug
@@ -133,3 +134,32 @@ def test_tools_format_evidence_and_resources(monkeypatch):
     )
     assert "Recursos verificados" in resources
     assert "Universidad Católica Argentina" in resources
+
+
+def test_empathy_evaluation_requires_scores_between_one_and_five():
+    criterion = EmpathyCriterion(score=4, feedback="Reflejó la emoción.")
+    evaluation = EmpathyEvaluation(
+        validation=criterion,
+        reflection=criterion,
+        open_questions=criterion,
+        non_judgment=criterion,
+        guidance=criterion,
+        strengths=["Escuchó sin interrumpir."],
+        opportunities=["Hacer una pregunta abierta."],
+        summary="Práctica útil.",
+    )
+
+    assert evaluation.validation.score == 4
+    with pytest.raises(ValueError):
+        EmpathyCriterion(score=6, feedback="Puntaje inválido.")
+
+
+def test_empathy_lab_begin_resets_previous_turns():
+    lab = EmpathyLab(AgentSettings(api_key=""))
+    lab.begin("Un conflicto con un colega")
+    lab.turns.append(("Practicante", "Te entiendo."))
+    lab.begin("Una conversación con un estudiante")
+
+    assert lab.active is True
+    assert lab.scenario == "Una conversación con un estudiante"
+    assert lab.turns == []

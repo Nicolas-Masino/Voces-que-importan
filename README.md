@@ -34,6 +34,18 @@ un proveedor posteriormente sin modificar la interfaz Chainlit.
 pytest -q
 ```
 
+## Laboratorio de empatía
+
+Escribí `/empatia` en el chat y describí una conversación difícil ficticia que
+quieras practicar. El agente interpretará a la otra persona por turnos. La primera
+respuesta se genera sin evaluación previa; desde el segundo turno, la evaluación
+acumulada ajusta cuánto se abre o se cierra el personaje en la siguiente respuesta.
+Para recibir una devolución completa sobre validación emocional, escucha, preguntas
+abiertas, ausencia de juicio y orientación, escribí `/evaluar_empatia` o
+`/salir_empatia`.
+No incluyas datos personales reales. La práctica no reemplaza apoyo profesional,
+institucional ni de emergencias.
+
 La carpeta `data/sources/` contiene fuentes resumidas con URL para que cada respuesta
 pueda citar evidencia. Antes de una demostración real deben verificarse vigencia,
 jurisdicción y canales oficiales. La prueba urgente incluida usa un caso ficticio.

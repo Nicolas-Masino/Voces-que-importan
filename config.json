@@ -9,6 +9,15 @@
         "threshold": 0.3
     },
     "topic": ["bienestar docente","convivencia universitaria","bullying y acoso","xenofobia y discriminación","salud mental","otro"],
+    "empathy_lab": {
+        "weights": {
+            "validation": 0.25,
+            "reflection": 0.25,
+            "open_questions": 0.2,
+            "non_judgment": 0.15,
+            "guidance": 0.15
+        }
+    },
     "resources": {
         "linea 135":{
             "name": "Línea 135", 

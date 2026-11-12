@@ -83,5 +83,30 @@ class RAGSettings(Settings):
         data = json.loads(raw_data)
         return cls(**data.get('rag', {}))
 
+class EmpathyLabSettings(Settings):
+    weights: dict
+
+    @classmethod
+    def load(cls, json_path: str = CONFIG_FILE) -> "EmpathyLabSettings":
+        raw_data = Path(json_path).read_text(encoding="utf-8")
+        data = json.loads(raw_data)
+        return cls(**data.get('empathy_lab', {}))
+
+    # weights debe cumplir con una estructura específica, por lo que podemos agregar validaciones adicionales si es necesario.
+    def __init__(self, **data):
+        super().__init__(**data)
+        required_keys = {"validation", "reflection", "open_questions", "non_judgment", "guidance"}
+        if not required_keys.issubset(self.weights.keys()):
+            missing = required_keys - self.weights.keys() # chequea que no falten claves requeridas
+            raise ValueError(f"Faltan claves requeridas en weights: {missing}")
+        # chequear que todos los valores sean números entre 0 y 1
+        if not all(isinstance(self.weights[k], (int, float)) and 0 <= self.weights[k] <= 1 for k in required_keys):
+            raise ValueError("Todos los valores en weights deben ser números entre 0 y 1.") 
+        # chequear que la suma de los pesos sea 1
+        total_weight = sum(self.weights[k] for k in required_keys)
+        if not (0.99 <= total_weight <= 1.01):  # Permitir un pequeño margen de error por redondeo
+            raise ValueError(f"La suma de los pesos debe ser 1. Suma actual: {total_weight}")
+
 AGENT_SETTINGS = AgentSettings.load()
 RAG_SETTINGS = RAGSettings.load()
+EMPATHY_LAB_SETTINGS = EmpathyLabSettings.load()
