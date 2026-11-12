@@ -1,4 +1,5 @@
 import json
+import logging
 from datetime import datetime
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -9,6 +10,28 @@ LOGS_DIR.mkdir(parents=True, exist_ok=True)
 LOG_DAY = datetime.now().strftime("%Y-%m-%d")
 LOGFORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 LOGFILE = LOGS_DIR / f"{LOG_DAY}_conversation.log"
+
+
+def configure_logging() -> None:
+    """Agrega el archivo diario al root logger sin reemplazar handlers existentes."""
+    root_logger = logging.getLogger()
+    if any(
+        getattr(handler, "_chatbot_file_handler", False)
+        and getattr(handler, "baseFilename", None) == str(LOGFILE.resolve())
+        for handler in root_logger.handlers
+    ):
+        return
+
+    file_handler = logging.FileHandler(LOGFILE, encoding="utf-8")
+    file_handler._chatbot_file_handler = True
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(logging.Formatter(LOGFORMAT))
+    root_logger.addHandler(file_handler)
+    if root_logger.level == logging.NOTSET or root_logger.level > logging.INFO:
+        root_logger.setLevel(logging.INFO)
+
+
+configure_logging()
 
 CONFIG_FILE = Path("config.json")
 # Cargar los topicos de NLP desde el archivo JSON

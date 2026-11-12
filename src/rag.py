@@ -18,7 +18,7 @@ import json
 import re
 import unicodedata
 from pathlib import Path
-from .config import RAG_SETTINGS, LOGFILE, LOGFORMAT, TOPICS
+from .config import RAG_SETTINGS, LOGFILE, LOGFORMAT, TOPICS, configure_logging
 from typing import Literal, Dict
 from pydantic import BaseModel, RootModel, Field
 
@@ -28,7 +28,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 # Crear logger para el sistema de recuperación de evidencia (RAG)
-logging.basicConfig(filename=LOGFILE, level=logging.INFO, format=LOGFORMAT)
+configure_logging()
 logger = logging.getLogger("RAG")
 
 Path(RAG_SETTINGS.corpus_dir).mkdir(parents=True, exist_ok=True)
