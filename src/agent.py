@@ -1,7 +1,6 @@
 import logging
 from collections.abc import Awaitable, Callable
 from langchain_openai import ChatOpenAI
-from openai import OpenAI
 
 from .config import AgentSettings, configure_logging
 from .metrics import Metrics
