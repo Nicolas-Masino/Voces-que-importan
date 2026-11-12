@@ -1,8 +1,9 @@
 import logging
+from collections.abc import Awaitable, Callable
 from langchain_openai import ChatOpenAI
 from openai import OpenAI
 
-from .config import AgentSettings, LOGFILE, LOGFORMAT
+from .config import AgentSettings, configure_logging
 from .metrics import Metrics
 from .safety import safety_from_llm, safety_from_re
 from .tools import analizar_situacion, consultar_evidencia, orientar_recursos
@@ -11,7 +12,7 @@ from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 # Crear logger para el agente conversacional
-logging.basicConfig(filename=LOGFILE, level=logging.INFO, format=LOGFORMAT)
+configure_logging()
 logger = logging.getLogger("Agent")
 
 TONES = {
@@ -65,7 +66,14 @@ class ConversationalAgent:
         self.history: list[dict] = []  # Historial en formato de mensajes de OpenAI
         self.metrics = Metrics()
 
-    async def respond(self, message: str) -> str:
+    async def respond(
+        self,
+        message: str,
+        progress: Callable[[str, str], Awaitable[None]] | None = None,
+    ) -> str:
+        async def report(stage: str, status: str) -> None:
+            if progress:
+                await progress(stage, status)
 
         def _safe_response(safety) -> str:
             response = safety.response or "Buscá ayuda humana inmediata y comunicate con emergencias."
@@ -87,7 +95,9 @@ class ConversationalAgent:
             return _safe_response(safety)
 
         # 2. Realizar analisis de NLP y evaluar seguridad en contexto
+        await report("analysis", "started")
         analysis = await analizar_situacion.ainvoke({"text": message})
+        await report("analysis", "completed")
         logger.info(f"Análisis de la situación: {analysis}")
         safety = safety_from_llm(analysis=analysis)
         if safety.level == "urgent":
@@ -97,10 +107,14 @@ class ConversationalAgent:
         evidence = {}
         resources = None
         if analysis.get("intent") == "pedir consejo":
+            await report("evidence", "started")
             evidence = await consultar_evidencia.ainvoke({"consulta": message, "topico": analysis.get("topic")})
+            await report("evidence", "completed")
             logger.info(f"Evidencia encontrada: {evidence.get('results')}")
         if analysis.get("intent") == "buscar orientación":
+            await report("resources", "started")
             resources = await orientar_recursos.ainvoke({"topico": analysis.get("topic"), "ambito": analysis.get("scope")})
+            await report("resources", "completed")
             logger.info(f"Recursos encontrados: {resources}")
 
         # 3. Construir el System Prompt ético y guía para el modelo

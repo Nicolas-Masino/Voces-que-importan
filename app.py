@@ -1,11 +1,17 @@
 import chainlit as cl
 from src.agent import ConversationalAgent
-from src.config import LOGFORMAT, LOGFILE
+from src.config import configure_logging
 import logging
 
 # Crear logger para la interfaz de usuario
-logging.basicConfig(filename=LOGFILE, level=logging.INFO, format=LOGFORMAT)
+configure_logging()
 logger = logging.getLogger("App")
+
+_STEP_LABELS = {
+    "analysis": "Analizando la situación",
+    "evidence": "Consultando evidencia",
+    "resources": "Buscando recursos",
+}
 
 @cl.on_chat_start
 async def start() -> None:
@@ -30,7 +36,28 @@ async def main(msg: cl.Message) -> None:
     
     # atrapar errores en el agente y responder con un mensaje genérico
     try:
-        response = await agent.respond(msg.content)
+        active_steps: dict[str, cl.Step] = {}
+        async def report_progress(stage: str, status: str) -> None:
+            label = _STEP_LABELS.get(stage)
+            if not label:
+                return
+
+            if status == "started":
+                step = cl.Step(name=label, type="tool")
+                step.output = "En curso..."
+                await step.__aenter__()
+                active_steps[stage] = step
+                return
+
+            if status == "completed":
+                step = active_steps.pop(stage, None)
+                if step is None:
+                    return
+
+                step.output = "Completado."
+                await step.__aexit__(None, None, None)
+
+        response = await agent.respond(msg.content, progress=report_progress)
     except Exception as e:
         logger.error(f"Error en la consulta: {e}")
         await cl.ErrorMessage(

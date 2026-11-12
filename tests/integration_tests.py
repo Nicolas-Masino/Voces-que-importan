@@ -36,8 +36,8 @@ def test_agent_orchestrates_analysis_tools_and_model(monkeypatch):
         calls["analysis"] = True
         return analysis
 
-    def fake_evidence(_message, topic):
-        calls["topic"] = topic
+    async def fake_evidence(values):
+        calls["topic"] = values["topico"]
         return {
             "results": [{"texto": "Evidencia de prueba"}],
             "content": "Evidencia de prueba",
@@ -51,8 +51,8 @@ def test_agent_orchestrates_analysis_tools_and_model(monkeypatch):
             calls["prompt"] = values
             return SimpleNamespace(content="Respuesta integrada")
 
-    monkeypatch.setattr("src.agent.analizar_situacion", fake_analysis)
-    monkeypatch.setattr("src.agent.consultar_evidencia", fake_evidence)
+    monkeypatch.setattr("src.agent.analizar_situacion", SimpleNamespace(ainvoke=fake_analysis))
+    monkeypatch.setattr("src.agent.consultar_evidencia", SimpleNamespace(ainvoke=fake_evidence))
     monkeypatch.setattr(
         "src.agent.ChatPromptTemplate.from_messages",
         lambda _messages: FakePrompt(),
@@ -68,3 +68,45 @@ def test_agent_orchestrates_analysis_tools_and_model(monkeypatch):
     assert len(agent.history) == 2
     assert agent.metrics.messages == 1
     assert agent.metrics.evidence_hits == 1
+
+
+def test_agent_reports_analysis_and_tool_progress(monkeypatch):
+    agent = ConversationalAgent(AgentSettings(api_key="", context_window=2))
+    events = []
+
+    async def fake_analysis(_message):
+        return {
+            "emotion": "tristeza",
+            "sentiment": "negativo",
+            "intent": "pedir consejo",
+            "scope": "institucional",
+            "topic": "bienestar docente",
+            "confidence": "alta",
+        }
+
+    async def fake_progress(stage, status):
+        events.append((stage, status))
+
+    class FakePrompt:
+        def __or__(self, _llm):
+            return self
+
+        async def ainvoke(self, _values):
+            return SimpleNamespace(content="Respuesta")
+
+    async def fake_evidence(_values):
+        return {"results": [], "content": "Sin evidencia"}
+
+    monkeypatch.setattr("src.agent.analizar_situacion", SimpleNamespace(ainvoke=fake_analysis))
+    monkeypatch.setattr("src.agent.consultar_evidencia", SimpleNamespace(ainvoke=fake_evidence))
+    monkeypatch.setattr("src.agent.ChatPromptTemplate.from_messages", lambda _messages: FakePrompt())
+    monkeypatch.setattr("src.agent.ChatOpenAI", lambda **_kwargs: object())
+
+    asyncio.run(agent.respond("Necesito consejo", progress=fake_progress))
+
+    assert events == [
+        ("analysis", "started"),
+        ("analysis", "completed"),
+        ("evidence", "started"),
+        ("evidence", "completed"),
+    ]
