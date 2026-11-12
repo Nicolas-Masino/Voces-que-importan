@@ -35,7 +35,7 @@ def orientar_recursos(
     topico: str | None = None,
     ambito: str | None = None,
     max_resultados: int = 4,
-) -> str:
+) -> dict:
     """
     Devuelve canales de ayuda verificados (oficinas de convivencia, defensorías,
     líneas de atención, protocolos). 
@@ -48,8 +48,8 @@ def orientar_recursos(
     Si no hay recursos, lo informa: nunca inventar.
     """
     out = buscar_recursos(topico, ambito, max_resultados)
-    if not out["recursos"]:
-        return (
+    if not out["resources"]:
+        out["content"] = (
             f"SIN_RECURSOS: no hay canales verificados {ambito} en la base curada. "
             "No inventes teléfonos, direcciones ni enlaces. Decile a la persona que "
             "no tenés un recurso verificado y sugerile consultar a la oficina de "
@@ -57,17 +57,18 @@ def orientar_recursos(
         )
  
     bloques = []
-    for r in out["recursos"]:
+    for r in out["resources"]:
         bloques.append(
-            f"- {r.name} ({r.scope})\n  {r.description}\n  {r.url}"
+            f"- {r.name} ({r.scope}): {r.description}\n  {r.url}"
         )
     aviso = ""
     if not out["flag_topico"] and topico:
         aviso = "\nNota: no hay recursos específicos para este tema; se muestran canales generales."
     if not ambito:
         aviso += "\nNota: no se conoce el ámbito de la persona; preguntalo antes de dar teléfonos."
-    return (
+    out["content"] = (
         "Recursos verificados (copiá nombre y enlace tal cual, sin modificarlos):\n"
         + "\n".join(bloques)
         + aviso
     )
+    return out

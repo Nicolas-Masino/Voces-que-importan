@@ -67,6 +67,8 @@ def test_agent_orchestrates_analysis_tools_and_model(monkeypatch):
     assert calls["analysis"] is True
     assert calls["topic"] == "bienestar docente"
     assert "Evidencia de prueba" in calls["prompt"]["system"]
+    assert len(agent.last_sources) == 1
+    assert "Evidencia de prueba" in agent.last_sources[0]
     assert len(agent.history) == 2
     assert agent.metrics.messages == 1
     assert agent.metrics.evidence_hits == 1
@@ -276,6 +278,42 @@ def test_chainlit_normal_message_sends_agent_response(monkeypatch):
 
     assert calls == ["Necesito orientación"]
     assert FakeSentMessage.sent[-1].content == "Respuesta simulada"
+
+
+def test_chainlit_shows_sources_in_side_panel(monkeypatch):
+    session = install_fake_chainlit(monkeypatch)
+    agent = ConversationalAgent(AgentSettings(api_key=""))
+    agent.last_sources = ["Fuente exacta de prueba."]
+
+    async def fake_respond(_message, progress=None):
+        return "Respuesta con respaldo"
+
+    monkeypatch.setattr(agent, "respond", fake_respond)
+    session.set("agent", agent)
+
+    asyncio.run(app.main(FakeIncomingMessage("Necesito orientación")))
+
+    sources_message = FakeSentMessage.sent[-1]
+    assert sources_message.content.startswith("### Fuentes")
+    assert "Fuente exacta de prueba." in sources_message.content
+
+
+def test_chainlit_hides_sources_panel_when_no_sources(monkeypatch):
+    session = install_fake_chainlit(monkeypatch)
+    agent = ConversationalAgent(AgentSettings(api_key=""))
+
+    async def fake_respond(_message, progress=None):
+        return "Respuesta sin fuentes"
+
+    monkeypatch.setattr(agent, "respond", fake_respond)
+    session.set("agent", agent)
+
+    asyncio.run(app.main(FakeIncomingMessage("Necesito orientación")))
+
+    assert all(
+        not message.content.startswith("### Fuentes")
+        for message in FakeSentMessage.sent
+    )
 
 
 def test_chainlit_emergency_message_uses_agent_safety_response(monkeypatch):

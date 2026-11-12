@@ -122,5 +122,12 @@ async def main(msg: cl.Message) -> None:
             content=f"Ocurrio un error en la consulta {e}"
         ).send()
         raise e
-    await cl.Message(content=response).send()
 
+    elements = []
+    if agent.last_sources:
+        elements.append(
+            cl.Text(content="### Fuentes consultadas:\n" + "\n\n".join(agent.last_sources),
+                    name="fuentes",
+                    display="side")
+        )   
+    await cl.Message(content=response, elements=elements).send()

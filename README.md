@@ -50,6 +50,10 @@ La carpeta `data/sources/` contiene fuentes resumidas con URL para que cada resp
 pueda citar evidencia. Antes de una demostración real deben verificarse vigencia,
 jurisdicción y canales oficiales. La prueba urgente incluida usa un caso ficticio.
 
+Cuando una respuesta usa evidencia RAG o recursos verificados, Chainlit muestra los
+fragmentos exactos y los recursos en un mensaje separado llamado **Fuentes**. Se
+omite cuando la respuesta no tiene fuentes recuperadas.
+
 Para la defensa, conservar capturas o un video de una ejecución demo como plan B si
 falla la conexión.
 
