@@ -104,8 +104,8 @@ def test_resources_filter_by_topic_and_scope():
 
     assert result["flag_topico"] is True
     assert result["flag_ambito"] is True
-    assert result["recursos"]
-    assert all(resource.scope == "institucional" for resource in result["recursos"])
+    assert result["resources"]
+    assert all(resource.scope == "institucional" for resource in result["resources"])
 
 
 def test_tools_format_evidence_and_resources(monkeypatch):
@@ -132,8 +132,8 @@ def test_tools_format_evidence_and_resources(monkeypatch):
     resources = orientar_recursos.invoke(
         {"topico": "convivencia universitaria", "ambito": "institucional"}
     )
-    assert "Recursos verificados" in resources
-    assert "Universidad Católica Argentina" in resources
+    assert "Recursos verificados" in resources.get("content", "")
+    assert "Universidad Católica Argentina" in resources.get("content", "")
 
 
 def test_empathy_evaluation_requires_scores_between_one_and_five():

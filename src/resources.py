@@ -69,7 +69,7 @@ def buscar_recursos(
  
     ordenados = sorted(res, key=lambda r: _prioridad_scope(r, ambito))
     return {
-        "recursos": ordenados[:max_resultados],
+        "resources": ordenados[:max_resultados],
         "flag_topico": flag_topico,
         "flag_ambito": flag_ambito,
     }

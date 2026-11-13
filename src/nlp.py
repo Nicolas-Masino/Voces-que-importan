@@ -9,7 +9,7 @@ class Analysis(BaseModel):
     """Análisis NLP de un mensaje de un estudiante o docente."""
 
     emotion: Literal[
-        "alegria", "tristeza", "enojo", "miedo", "sorpresa", "disgusto", "otro"
+        "alegria", "tristeza", "enojo", "miedo", "sorpresa", "disgusto"
     ] = Field(description="Emoción predominante que expresa la persona.")
 
     sentiment: Literal["positivo", "negativo", "neutro"] = Field(

@@ -2,6 +2,7 @@ import chainlit as cl
 from src.agent import ConversationalAgent
 from src.config import AgentSettings, configure_logging
 from src.empathy import EmpathyLab, format_empathy_evaluation
+from src.journal import JournalSession, format_journal, generate_journal, journal_docx
 import logging
 
 # Crear logger para la interfaz de usuario
@@ -9,15 +10,16 @@ configure_logging()
 logger = logging.getLogger("App")
 
 _STEP_LABELS = {
-    "analysis": "Analizando la situación",
+    "analysis": "Analizando situación",
     "evidence": "Consultando evidencia",
-    "resources": "Buscando recursos",
+    "resources": "Buscando recursos"
 }
 
 commands = [
     {"id": "Empatía", "icon": "heart", "description": "Iniciar laboratorio de empatía"},
     {"id": "Evaluar empatía", "icon": "check", "description": "Evaluar la práctica de empatía"},
     {"id": "Salir de empatía", "icon": "x", "description": "Salir del laboratorio de empatía"},
+    {"id": "Bitácora", "icon": "notebook-pen", "description":"Arma un resumen de un hecho"}
 ]
 
 @cl.on_chat_start
@@ -28,12 +30,76 @@ async def start() -> None:
             "¡Hola! Soy **Elisa**, un espacio de escucha y orientación "
             "sobre bienestar docente y convivencia universitaria.\n\n"
             "¿Cómo te sentís hoy o sobre qué situación te gustaría conversar?"
-        )   
+        )
     ).send()
     await cl.context.emitter.set_commands(commands)
 
 @cl.on_message
 async def main(msg: cl.Message) -> None:
+    if msg.command == "Bitácora":
+        cl.user_session.set("journal", JournalSession())
+        await cl.Message(
+                content=(
+                    "Iniciemos una bitácora privada y temporal. La información se mantiene "
+                    "solo durante esta sesión y no se guarda en el servidor.\n\n"
+                    "Te voy a hacer algunas preguntas. No incluyas datos que no quieras "
+                    "presentar ante la oficina de convivencia.\n\n"
+                    f"{JournalSession().current_question}"
+                )
+            ).send()
+        return
+
+    journal = cl.user_session.get("journal")
+    if isinstance(journal, JournalSession):
+        if journal.reviewing:
+            if msg.content.strip().lower() in {"confirmar", "descargar"}:
+                if journal.entry is None:
+                    await cl.Message(content="No hay un resumen listo para descargar.").send()
+                    return
+                file = cl.File(
+                    name="bitacora_hechos.docx",
+                    content=journal_docx(journal.entry),
+                    display="inline",
+                )
+                await cl.Message(
+                    content="Tu bitácora está lista para descargar. No se guardó en el servidor.",
+                    elements=[file],
+                ).send()
+                cl.user_session.set("journal", None)
+                return
+            if journal.correction(msg.content):
+                try:
+                    journal.entry = await generate_journal(AgentSettings.load(), journal.answers)
+                except Exception as exc:
+                    logger.error(f"Error al actualizar la bitácora: {exc}")
+                    await cl.ErrorMessage(
+                        content="No pude actualizar la bitácora. Intentá nuevamente."
+                    ).send()
+                    return
+                await cl.Message(content=format_journal(journal.entry)).send()
+                return
+            await cl.Message(
+                content="Escribí `confirmar` para descargar o una corrección con el formato "
+                        "`campo: corrección`."
+            ).send()
+            return
+
+        journal.record(msg.content)
+        if not journal.complete:
+            await cl.Message(content=journal.current_question).send()
+            return
+        try:
+            journal.entry = await generate_journal(AgentSettings.load(), journal.answers)
+        except Exception as exc:
+            logger.error(f"Error al generar la bitácora: {exc}")
+            await cl.ErrorMessage(
+                content="No pude generar el resumen. Intentá nuevamente."
+            ).send()
+            return
+        journal.reviewing = True
+        await cl.Message(content=format_journal(journal.entry)).send()
+        return
+
     empathy_lab = cl.user_session.get("empathy_lab")
 
     if msg.command == "Empatía":
@@ -122,5 +188,9 @@ async def main(msg: cl.Message) -> None:
             content=f"Ocurrio un error en la consulta {e}"
         ).send()
         raise e
-    await cl.Message(content=response).send()
 
+    elements = []
+    if agent.last_sources:
+        elements.append(cl.Text(content="**Fuentes y referencias:**\n" + "\n\n".join(agent.last_sources), name="fuentes", display="side"))
+
+    await cl.Message(content=response, elements=elements).send()
