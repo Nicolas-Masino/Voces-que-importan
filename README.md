@@ -68,6 +68,12 @@ MANIFEST_EJEMPLO = {
 
 El RAG solo se inicia si el módulo de NLP detecta que la intención es «pedir consejo».
 
+El corpus RAG no se reconstruye automáticamente, es necesario generar el índice chroma mediante:
+
+```bash
+.venv/bin/python -m src.rag ingest
+```
+
 ### Recursos institucionales y globales
 
 Dentro del archivo `config.json` se almacena todos los recursos disponibles que tiene el agente para orientar al usuario si así lo desea. Dichos, pueden ser tanto institucionales como globales y no dependen de un sistema RAG, sino de una búsqueda jerárquica y por prioridades. 

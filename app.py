@@ -10,16 +10,16 @@ configure_logging()
 logger = logging.getLogger("App")
 
 _STEP_LABELS = {
-    "analysis": "Analizando la situación",
+    "analysis": "Analizando situación",
     "evidence": "Consultando evidencia",
-    "resources": "Buscando recursos",
+    "resources": "Buscando recursos"
 }
 
 commands = [
     {"id": "Empatía", "icon": "heart", "description": "Iniciar laboratorio de empatía"},
     {"id": "Evaluar empatía", "icon": "check", "description": "Evaluar la práctica de empatía"},
     {"id": "Salir de empatía", "icon": "x", "description": "Salir del laboratorio de empatía"},
-    {"id": "Bitácora", "icon": "notebook-pen", "description":"Arma un resumen de un hecho más facíl"}
+    {"id": "Bitácora", "icon": "notebook-pen", "description":"Arma un resumen de un hecho"}
 ]
 
 @cl.on_chat_start
