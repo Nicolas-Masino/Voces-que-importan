@@ -48,7 +48,7 @@ def _form_system(a: dict, resources: str | None, scope: str | None, evidence: st
         extra.append("La persona quiere ser escuchada: reflejá lo que dijo, validá y hacé UNA "
                      "pregunta abierta. No des listas de recursos todavía; ofrecé la información después.")
     if a.get("topic") in ["bullying y acoso", "xenofobia y discriminación"]:
-        extra.append("Invita a la persona que puede registrar la situación con el comando 'Bitácora' para comunicarla en la oficina de convivencia.")
+        extra.append("Invita a la persona a registrar la situación con el comando 'Bitácora' para comunicarla en la oficina de convivencia.")
     if a.get("confidence") == "baja":
         extra.append("El mensaje es ambiguo o corto: hacé UNA pregunta aclaratoria breve y nada más.")
     if a.get("intent") == "pedir consejo" and not scope:
