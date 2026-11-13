@@ -1,10 +1,12 @@
 import asyncio
 from types import SimpleNamespace
+import io
+from docx import Document
 
 from src.agent import ConversationalAgent
 from src.config import AgentSettings
 from src.empathy import EmpathyCriterion, EmpathyEvaluation, EmpathyLab
-from src.journal import JournalEntry, JournalSession, format_journal, journal_pdf
+from src.journal import JournalEntry, JournalSession, format_journal, journal_docx
 import app
 
 
@@ -285,7 +287,7 @@ def test_journal_summary_separates_observable_facts_and_interpretations():
     assert "Sentí que el comentario buscaba excluirme." in summary
 
 
-def test_journal_pdf_is_generated_in_memory():
+def test_journal_docx_is_generated_in_memory():
     entry = JournalEntry(
         date="10 de noviembre",
         location="Aula 4",
@@ -295,10 +297,18 @@ def test_journal_pdf_is_generated_in_memory():
         interpretations="Me sentí incómoda.",
     )
 
-    pdf = journal_pdf(entry)
+    docx = journal_docx(entry)
 
-    assert pdf.startswith(b"%PDF")
-    assert b"bitacora" not in pdf.lower()
+    assert docx.startswith(b"PK")
+    doc = Document(io.BytesIO(docx))
+
+    # Extraer todo el texto de los párrafos del documento Word
+    texto_completo = " ".join([p.text for p in doc.paragraphs])
+
+    # Verificar que el contenido este completo
+    assert "Bitácora de hechos" in texto_completo
+    assert "Qué ocurrió" in texto_completo
+    assert "Aviso:" in texto_completo
 
 
 def install_fake_chainlit(monkeypatch):
@@ -318,16 +328,22 @@ def install_fake_chainlit(monkeypatch):
     return session
 
 
-def test_chainlit_action_starts_temporary_journal(monkeypatch):
+def test_chainlit_command_starts_temporary_journal(monkeypatch):
     session = install_fake_chainlit(monkeypatch)
+    asyncio.run(app.main(FakeIncomingMessage("", command="Bitácora")))
+    journal = session.get("journal")
+    
+    assert isinstance(journal, JournalSession)
+    assert "Iniciemos una bitácora privada y temporal" in FakeSentMessage.sent[-1].content
 
-    asyncio.run(app.on_action(SimpleNamespace(payload={"value": "start"})))
+    asyncio.run(app.main(FakeIncomingMessage("Ocurrio el 11 de noviembre en el aula 4")))
 
-    assert isinstance(session.get("journal"), JournalSession)
-    assert "¿Cuándo" in FakeSentMessage.sent[-1].content
+    assert journal.answers['date'] == "Ocurrio el 11 de noviembre en el aula 4"
+    assert "¿Dónde ocurrió? Indicá el espacio físico o virtual." in FakeSentMessage.sent[-1].content
+    assert journal.complete is False
 
 
-def test_chainlit_journal_reviews_corrections_and_attaches_pdf(monkeypatch):
+def test_chainlit_journal_reviews_corrections_and_attaches_docx(monkeypatch):
     session = install_fake_chainlit(monkeypatch)
     journal = JournalSession()
     session.set("journal", journal)
@@ -347,7 +363,7 @@ def test_chainlit_journal_reviews_corrections_and_attaches_pdf(monkeypatch):
         return entry
 
     monkeypatch.setattr(app, "generate_journal", fake_generate)
-    monkeypatch.setattr(app, "journal_pdf", lambda _entry: b"%PDF-prueba")
+    monkeypatch.setattr(app, "journal_docx", lambda _entry: b"%DOCX-prueba")
 
     for answer in ["10 de noviembre", "Aula 4", "Se registró una frase.", "Ana", "No informado"]:
         asyncio.run(app.main(FakeIncomingMessage(answer)))
@@ -359,8 +375,8 @@ def test_chainlit_journal_reviews_corrections_and_attaches_pdf(monkeypatch):
     message = FakeSentMessage.sent[-1]
     assert generated_answers[-1]["location"] == "Aula 5"
     assert message.elements
-    assert message.elements[0].name == "bitacora_hechos.pdf"
-    assert message.elements[0].content == b"%PDF-prueba"
+    assert message.elements[0].name == "bitacora_hechos.docx"
+    assert message.elements[0].content == b"%DOCX-prueba"
     assert session.get("journal") is None
 
 

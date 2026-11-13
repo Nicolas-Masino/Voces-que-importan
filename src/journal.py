@@ -1,17 +1,15 @@
 """Flujo temporal para registrar hechos y preparar un resumen institucional."""
 
 from dataclasses import dataclass, field
-from io import BytesIO
-from xml.sax.saxutils import escape
+from datetime import date
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
-from reportlab.lib.enums import TA_LEFT
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import mm
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
+
+import io
+from docx import Document
+from docx.shared import Pt, RGBColor
 
 
 class JournalEntry(BaseModel):
@@ -108,40 +106,64 @@ def format_journal(entry: JournalEntry) -> str:
         "`campo: corrección` para corregir un dato."
     )
 
-
-def journal_pdf(entry: JournalEntry) -> bytes:
-    buffer = BytesIO()
-    styles = getSampleStyleSheet()
-    body = ParagraphStyle(
-        "JournalBody",
-        parent=styles["BodyText"],
-        alignment=TA_LEFT,
-        leading=15,
-        spaceAfter=8,
-    )
-    document = SimpleDocTemplate(
-        buffer,
-        pagesize=A4,
-        rightMargin=20 * mm,
-        leftMargin=20 * mm,
-        topMargin=18 * mm,
-        bottomMargin=18 * mm,
-        title="Bitácora de hechos",
-    )
+def journal_docx(entry: JournalEntry) -> bytes:
+    doc = Document()
     participants = ", ".join(entry.participants) or "No informado"
-    sections = [
-        ("Bitácora de hechos", "Registro preparado para revisión por la persona usuaria."),
-        ("Fecha", entry.date),
-        ("Lugar", entry.location),
-        ("Personas presentes", participants),
-        ("Hechos observables", entry.description),
-        ("Observaciones", entry.observations),
-        ("Interpretaciones e impacto", entry.interpretations),
-    ]
-    story = []
-    for title, content in sections:
-        story.append(Paragraph(f"<b>{escape(title)}</b>", body))
-        story.append(Paragraph(escape(content).replace("\n", "<br/>"), body))
-        story.append(Spacer(1, 4))
-    document.build(story)
+
+    # Título principal
+    doc.add_heading("Bitácora de hechos", level=0)
+
+    # Subtítulo en cursiva
+    p_fecha = doc.add_paragraph()
+    run_fecha = p_fecha.add_run(
+        f"Registro personal elaborado el {date.today().strftime('%d/%m/%Y')} a partir del relato de la persona."
+    )
+    run_fecha.italic = True
+
+    # Sección 1
+    doc.add_heading("1. Qué ocurrió (según relata la persona)", level=2)
+    doc.add_paragraph(entry.description or "No indicado")
+
+    # Sección 2 (con viñetas y negritas)
+    doc.add_heading("2. Cuándo y dónde", level=2)
+    p_cuando = doc.add_paragraph(style="List Bullet")
+    p_cuando.add_run("Cuándo: ").bold = True
+    p_cuando.add_run(entry.date or "No indicado")
+
+    p_donde = doc.add_paragraph(style="List Bullet")
+    p_donde.add_run("Dónde / medio: ").bold = True
+    p_donde.add_run(entry.location or "No indicado")
+
+    # Sección 3
+    doc.add_heading("3. Personas", level=2)
+    p_pers = doc.add_paragraph()
+    p_pers.add_run("Señaladas por quien relata:\n").bold = True
+    p_pers.add_run(participants)
+
+    # Sección 4 (numerada correlativamente)
+    doc.add_heading("4. Cómo lo vivió la persona", level=2)
+    doc.add_paragraph(entry.interpretations or "No indicado")
+
+    # Sección 5
+    doc.add_heading("5. Observaciones adicionales", level=2)
+    doc.add_paragraph(entry.observations or "No indicado")
+
+    # Aviso legal al pie
+    doc.add_paragraph("—" * 35)
+    p_aviso = doc.add_paragraph()
+    run_bold = p_aviso.add_run("Aviso: ")
+    run_bold.bold = True
+    run_texto = p_aviso.add_run(
+        "este documento refleja lo que la persona relató y no fue verificado. No es una denuncia, "
+        "no constituye prueba ni establece responsabilidades. Una denuncia, una investigación y un "
+        "hecho probado son cosas distintas: solo el canal institucional competente puede determinarlo. "
+        "Conviene guardarlo en un lugar seguro y compartirlo únicamente con quien la persona decida."
+    )
+    run_texto.font.size = Pt(9)
+    run_texto.font.color.rgb = RGBColor(100, 100, 100)
+
+    # Guardar en buffer de memoria RAM
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
     return buffer.getvalue()

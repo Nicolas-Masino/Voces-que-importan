@@ -18,7 +18,7 @@ import json
 import re
 import unicodedata
 from pathlib import Path
-from .config import RAG_SETTINGS, LOGFILE, LOGFORMAT, TOPICS, configure_logging
+from .config import RAG_SETTINGS, TOPICS, configure_logging
 from typing import Literal, Dict
 from pydantic import BaseModel, RootModel, Field
 
