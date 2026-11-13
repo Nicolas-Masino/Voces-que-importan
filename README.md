@@ -54,6 +54,12 @@ Cuando una respuesta usa evidencia RAG o recursos verificados, Chainlit muestra 
 fragmentos exactos y los recursos en un mensaje separado llamado **Fuentes**. Se
 omite cuando la respuesta no tiene fuentes recuperadas.
 
+El botón **Armar bitácora de un hecho** inicia una guía temporal con preguntas sobre
+fecha, lugar, hechos observables, personas presentes y observaciones. Antes de
+descargar, podés revisar y corregir el resumen; el PDF separa hechos observables de
+interpretaciones e impacto. El PDF se genera en memoria y la bitácora no se guarda en
+el servidor.
+
 Para la defensa, conservar capturas o un video de una ejecución demo como plan B si
 falla la conexión.
 

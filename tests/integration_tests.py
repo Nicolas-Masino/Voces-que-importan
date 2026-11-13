@@ -4,6 +4,7 @@ from types import SimpleNamespace
 from src.agent import ConversationalAgent
 from src.config import AgentSettings
 from src.empathy import EmpathyCriterion, EmpathyEvaluation, EmpathyLab
+from src.journal import JournalEntry, JournalSession, format_journal, journal_pdf
 import app
 
 
@@ -221,8 +222,10 @@ class FakeSession:
 class FakeSentMessage:
     sent = []
 
-    def __init__(self, content):
+    def __init__(self, content, elements=None, actions=None):
         self.content = content
+        self.elements = elements or []
+        self.actions = actions or []
 
     async def send(self):
         self.__class__.sent.append(self)
@@ -232,10 +235,70 @@ class FakeErrorMessage(FakeSentMessage):
     pass
 
 
+class FakeFile:
+    def __init__(self, name, content, display):
+        self.name = name
+        self.content = content
+        self.display = display
+
+
+class FakeText:
+    def __init__(self, content, name, display):
+        self.content = content
+        self.name = name
+        self.display = display
+
+
 class FakeIncomingMessage:
     def __init__(self, content, command=None):
         self.content = content
         self.command = command
+
+
+def test_journal_session_guides_questions_and_keeps_data_in_memory():
+    journal = JournalSession()
+
+    assert journal.current_question.startswith("¿Cuándo")
+    for answer in ["10 de noviembre", "Aula 4", "Dijo 'no vuelvas'", "Ana y Luis", "Me sentí mal"]:
+        journal.record(answer)
+
+    assert journal.complete is True
+    assert journal.answers["description"] == "Dijo 'no vuelvas'"
+    assert journal.answers["participants"] == "Ana y Luis"
+    assert not hasattr(journal, "path")
+
+
+def test_journal_summary_separates_observable_facts_and_interpretations():
+    entry = JournalEntry(
+        date="10 de noviembre",
+        location="Aula 4",
+        description="La persona dijo: 'no vuelvas'.",
+        participants=["Ana", "Luis"],
+        observations="La conversación terminó después de esa frase.",
+        interpretations="Sentí que el comentario buscaba excluirme.",
+    )
+
+    summary = format_journal(entry)
+
+    assert "Hechos observables" in summary
+    assert "Interpretaciones e impacto" in summary
+    assert "Sentí que el comentario buscaba excluirme." in summary
+
+
+def test_journal_pdf_is_generated_in_memory():
+    entry = JournalEntry(
+        date="10 de noviembre",
+        location="Aula 4",
+        description="Se registró una frase.",
+        participants=["Ana"],
+        observations="No informado",
+        interpretations="Me sentí incómoda.",
+    )
+
+    pdf = journal_pdf(entry)
+
+    assert pdf.startswith(b"%PDF")
+    assert b"bitacora" not in pdf.lower()
 
 
 def install_fake_chainlit(monkeypatch):
@@ -245,12 +308,60 @@ def install_fake_chainlit(monkeypatch):
     monkeypatch.setattr(app.cl, "user_session", session)
     monkeypatch.setattr(app.cl, "Message", FakeSentMessage)
     monkeypatch.setattr(app.cl, "ErrorMessage", FakeErrorMessage)
+    monkeypatch.setattr(app.cl, "File", FakeFile)
+    monkeypatch.setattr(app.cl, "Text", FakeText)
     class FakeEmitter:
         async def set_commands(self, _commands):
             return None
 
     monkeypatch.setattr(app.cl, "context", SimpleNamespace(emitter=FakeEmitter()))
     return session
+
+
+def test_chainlit_action_starts_temporary_journal(monkeypatch):
+    session = install_fake_chainlit(monkeypatch)
+
+    asyncio.run(app.on_action(SimpleNamespace(payload={"value": "start"})))
+
+    assert isinstance(session.get("journal"), JournalSession)
+    assert "¿Cuándo" in FakeSentMessage.sent[-1].content
+
+
+def test_chainlit_journal_reviews_corrections_and_attaches_pdf(monkeypatch):
+    session = install_fake_chainlit(monkeypatch)
+    journal = JournalSession()
+    session.set("journal", journal)
+    entry = JournalEntry(
+        date="10 de noviembre",
+        location="Aula 4",
+        description="Se registró una frase.",
+        participants=["Ana"],
+        observations="No informado",
+        interpretations="Me sentí incómoda.",
+    )
+
+    generated_answers = []
+
+    async def fake_generate(_settings, answers):
+        generated_answers.append(dict(answers))
+        return entry
+
+    monkeypatch.setattr(app, "generate_journal", fake_generate)
+    monkeypatch.setattr(app, "journal_pdf", lambda _entry: b"%PDF-prueba")
+
+    for answer in ["10 de noviembre", "Aula 4", "Se registró una frase.", "Ana", "No informado"]:
+        asyncio.run(app.main(FakeIncomingMessage(answer)))
+    assert journal.reviewing is True
+
+    asyncio.run(app.main(FakeIncomingMessage("lugar: Aula 5")))
+    asyncio.run(app.main(FakeIncomingMessage("confirmar")))
+
+    message = FakeSentMessage.sent[-1]
+    assert generated_answers[-1]["location"] == "Aula 5"
+    assert message.elements
+    assert message.elements[0].name == "bitacora_hechos.pdf"
+    assert message.elements[0].content == b"%PDF-prueba"
+    assert session.get("journal") is None
 
 
 def test_chainlit_start_initializes_session_and_sends_greeting(monkeypatch):
@@ -293,9 +404,14 @@ def test_chainlit_shows_sources_in_side_panel(monkeypatch):
 
     asyncio.run(app.main(FakeIncomingMessage("Necesito orientación")))
 
-    sources_message = FakeSentMessage.sent[-1]
-    assert sources_message.content.startswith("### Fuentes")
-    assert "Fuente exacta de prueba." in sources_message.content
+    response_message = FakeSentMessage.sent[-1]
+    assert response_message.content == "Respuesta con respaldo"
+    assert len(response_message.elements) == 1
+    source_panel = response_message.elements[0]
+    assert source_panel.name == "fuentes"
+    assert source_panel.display == "side"
+    assert source_panel.content.startswith("**Fuentes y referencias:**")
+    assert "Fuente exacta de prueba." in source_panel.content
 
 
 def test_chainlit_hides_sources_panel_when_no_sources(monkeypatch):
@@ -310,10 +426,7 @@ def test_chainlit_hides_sources_panel_when_no_sources(monkeypatch):
 
     asyncio.run(app.main(FakeIncomingMessage("Necesito orientación")))
 
-    assert all(
-        not message.content.startswith("### Fuentes")
-        for message in FakeSentMessage.sent
-    )
+    assert FakeSentMessage.sent[-1].elements == []
 
 
 def test_chainlit_emergency_message_uses_agent_safety_response(monkeypatch):
