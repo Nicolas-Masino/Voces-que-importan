@@ -210,6 +210,45 @@ def test_empathy_lab_feeds_previous_evaluation_into_next_simulation_turn(monkeyp
     assert prompts[1]["behavior"] == "Respondés poco, con cautela; todavía no confiás."
 
 
+def test_empathy_lab_keeps_the_counterpart_role_in_a_multi_role_scenario(monkeypatch):
+    lab = EmpathyLab(AgentSettings(api_key="", model="test"))
+    lab.begin(
+        "Soy un docente adjunto. El coordinador de la cátedra me asignó "
+        "corregir 80 trabajos prácticos para el lunes."
+    )
+    captured = {}
+
+    class FakeChain:
+        async def ainvoke(self, values):
+            captured["values"] = values
+            return SimpleNamespace(content="Necesito que colabores para cerrar las actas.")
+
+    class FakeLLM:
+        pass
+
+    class FakePrompt:
+        def __or__(self, _llm):
+            return FakeChain()
+
+    def capture_messages(messages):
+        captured["messages"] = messages
+        return FakePrompt()
+
+    monkeypatch.setattr("src.empathy.ChatOpenAI", lambda **_kwargs: FakeLLM())
+    monkeypatch.setattr(
+        "src.empathy.ChatPromptTemplate.from_messages",
+        capture_messages,
+    )
+
+    response = asyncio.run(lab.respond("No, no puedo realizar semejante trabajo."))
+
+    assert response == "Necesito que colabores para cerrar las actas."
+    assert "respondas como el practicante" in captured["messages"][0][1]
+    assert "vos sos el coordinador o jefe de" in captured["messages"][0][1]
+    assert captured["values"]["scenario"].startswith("Soy un docente adjunto")
+    assert captured["values"]["message"] == "No, no puedo realizar semejante trabajo."
+
+
 class FakeSession:
     def __init__(self):
         self.values = {}

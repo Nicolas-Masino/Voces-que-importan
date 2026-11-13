@@ -13,7 +13,7 @@ Junto a ello se logra tener respuestas más ricas, seguras e informadas.
 
 La idea del laboratorio de empatía es permitirle al usuario practicar una conversación difícil en un entorno seguro y simulado. De esta manera, entrena su empatía y habilidades blandas para comunicar mejor sus preocupaciones o deseos, sin herir a nadie.
 
-Para activarlo se utiliza el comando `Empatía`. Una vez inicializado, el agente le pedirá que describa la situación y las personas involucradas para tener una mejor noción y elaborar respuestas como si fuera una charla real con la otra parte. 
+Para activarlo se utiliza el comando `Empatía`. Una vez inicializado, el agente le pedirá que describa la situación y las personas involucradas para tener una mejor noción y elaborar respuestas como si fuera una charla real con la otra parte. Conviene indicar explícitamente el rol del usuario y el de la contraparte (por ejemplo, “soy docente y el coordinador me asignó una tarea”): el simulador interpreta la contraparte, no reescribe ni responde en nombre del usuario.
 
 Cuenta con un sistema de penalización para medir prejuicios, paráfrasis y falta de compresión por parte del usuario. Así, el comportamiento del modelo se verá modificada dependiendo de esta puntuación. Dicho score es posible obtenerlo con el comando `Evaluar empatía`, junto a un resumen de fortalezas y oportunidades de mejora. 
 

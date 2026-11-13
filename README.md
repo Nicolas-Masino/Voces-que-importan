@@ -106,7 +106,7 @@ Cuando una respuesta usa evidencia RAG o recursos verificados, Chainlit muestra 
 
 El laboratorio de empatía fue desarrollado para que las personas practiquen una conversación difícil que deben tener, en un entorno seguro y simulado. Se inicializa bajo el comando `Empatía`.
 
-Una vez comenzado, el agente le pedirá que describa la situación para que este pueda interpretar a la otra persona, simular una charla real, y obtener un personaje ficticio. En función de como el usuario responda y plantee la conversación, el LLM lo estará evaluando mediante la siguiente rubrica:
+Una vez comenzado, el agente le pedirá que describa la situación y los roles involucrados para interpretar a la otra persona, simular una charla real y obtener un personaje ficticio. El usuario debe indicar quién es y quién es la contraparte (por ejemplo, «soy docente y el coordinador me asignó una tarea»): el simulador responde como la contraparte, no en nombre del usuario. En función de cómo el usuario responda y plantee la conversación, el LLM lo estará evaluando mediante la siguiente rúbrica:
 
 - Validación emocional
 - Escucha y paráfrasis
