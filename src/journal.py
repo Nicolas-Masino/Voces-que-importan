@@ -95,7 +95,6 @@ async def generate_journal(settings, answers: dict[str, str]) -> JournalEntry:
 def format_journal(entry: JournalEntry) -> str:
     participants = ", ".join(entry.participants) or "No informado"
     return (
-        "### Resumen para revisión\n\n"
         f"**Fecha:** {entry.date}\n\n"
         f"**Lugar:** {entry.location}\n\n"
         f"**Personas presentes:** {participants}\n\n"

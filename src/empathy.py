@@ -122,7 +122,7 @@ def format_empathy_evaluation(evaluation: EmpathyEvaluation) -> str:
         ("No juzgar ni minimizar", evaluation.non_judgment),
         ("Orientación y próximos pasos", evaluation.guidance),
     ]
-    lines = ["### Devolución del laboratorio de empatía", ""]
+    lines = [""]
     lines.extend(f"- **{label}: {criterion.score}/5** — {criterion.feedback}" for label, criterion in criteria)
     if evaluation.strengths:
         lines.extend(["", "**Fortalezas**", *[f"- {item}" for item in evaluation.strengths]])
