@@ -1,15 +1,60 @@
-/* Strobi flota arriba a la derecha; no interfiere con el chat. */
+/* Strobi: esquina superior derecha durante la conversación,
+   centrado y grande en la pantalla de bienvenida. */
 #elisa-avatar {
   position: fixed;
-  top: 72px;
-  right: 28px;
+  top: 110px;
+  left: 60px;
   width: 128px;
   height: 128px;
   z-index: 20;
   pointer-events: none;
+  transition: top 0.6s ease, left 0.6s ease, width 0.6s ease, height 0.6s ease;
 }
 
-/* El cuerpo puede salirse de su caja mientras se mueve. */
+body.elisa-hero #elisa-avatar {
+  top: 14vh;
+  left: calc(50% - 60px);
+  width: 120px;
+  height: 120px;
+}
+
+/* Saludo debajo del avatar; se desvanece al empezar a conversar. */
+#elisa-hero {
+  position: fixed;
+  left: 50%;
+  top: calc(14vh + 140px);
+  transform: translateX(-50%);
+  width: min(560px, 88vw);
+  text-align: center;
+  z-index: 19;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  color: hsl(var(--foreground, 0 0% 10%));
+}
+
+body.elisa-hero #elisa-hero {
+  opacity: 1;
+}
+
+#elisa-hero h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 0.5rem;
+}
+
+#elisa-hero p {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0 0 0.5rem;
+  color: hsl(var(--muted-foreground, 0 0% 40%));
+}
+
+#elisa-hero p.elisa-hero-question {
+  color: hsl(var(--foreground, 0 0% 10%));
+}
+
 @media (max-width: 900px) {
   #elisa-avatar {
     top: 64px;
@@ -17,4 +62,72 @@
     width: 72px;
     height: 72px;
   }
+  body.elisa-hero #elisa-avatar {
+    top: 10vh;
+    right: calc(50% - 80px);
+    width: 160px;
+    height: 160px;
+  }
+  #elisa-hero {
+    top: calc(10vh + 176px);
+  }
+  #elisa-hero h1 {
+    font-size: 1.4rem;
+  }
+}
+
+/* Poca altura: evita que el saludo choque con el cuadro de texto. */
+@media (max-height: 640px) {
+  #elisa-hero p:not(.elisa-hero-question) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #elisa-avatar,
+  #elisa-hero {
+    transition: none;
+  }
+}
+
+/* ---- Pantalla de bienvenida: sin logo de Chainlit y cuadro de mensaje más abajo ---- */
+body.elisa-hero img.logo,
+body.elisa-hero img[alt="logo"],
+body.elisa-hero img[alt="watermark"] {
+  display: none !important;
+}
+
+/* El cuadro de mensaje baja para dejar lugar al saludo.
+   Al enviar el primer mensaje se quita la clase y Chainlit lo ubica abajo. */
+body.elisa-hero #message-composer {
+  transform: translateY(min(34vh, 260px));
+}
+
+/* Oculta el círculo gris de "esperando respuesta": Strobi ya muestra que piensa. */
+.loading-indicator,
+.animate-pulse.rounded-full {
+  display: none !important;
+}
+
+/* Oculta el canvas Listening cuando se graba un audio */
+div.flex.items-center.gap-1:has(> canvas) > div.text-muted-foreground {
+  display: none !important;
+}
+
+/* FONTS */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/* 2. Definir la fuente a nivel raíz y sobrescribir las variables tipográficas de Chainlit */
+:root {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* 3. Forzar la tipografía en el cuerpo y contenedores principales del chat */
+html, body, .cl-app, [class*="MuiTypography"], p, div, span, input, textarea, button {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* 4. Mantener una fuente monoespaciada limpia para bloques de código */
+code, pre, kbd, samp {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
 }

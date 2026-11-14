@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createAvatar } from '@bible-strong/avatar-react'
+import { stateNames } from '@bible-strong/avatar-core'
 import strobi from './strobi.avatar.json'
 
 // Valida el archivo una sola vez.
@@ -9,6 +10,8 @@ const Strobi = createAvatar(strobi)
 const TYPING_PAUSE_MS = 2500 // sin teclear: vuelve a reposo
 const THINKING_TIMEOUT_MS = 60000 // si el backend nunca responde
 const SLEEP_AFTER_MS = 90000 // inactividad total: se duerme
+const ERROR_HOLD_MS = 10000
+const ERROR_STATE = 'alerting'
 
 function ElisaAvatar() {
   const [view, setView] = useState({ state: 'idle', face: undefined })
@@ -29,6 +32,11 @@ function ElisaAvatar() {
       setView({ state, face })
       if (holdMs) holdTimer = setTimeout(() => go('idle'), holdMs)
     }
+
+    // Pantalla de bienvenida: Strobi centrado hasta el primer mensaje.
+    document.body.classList.add('elisa-hero')
+    const leaveHero = () => document.body.classList.remove('elisa-hero')
+    go('happy', undefined, 5000)
 
     const markActive = () => {
       lastActive = Date.now()
@@ -51,6 +59,7 @@ function ElisaAvatar() {
 
     // La persona envía: Strobi asiente y piensa hasta que llegue la respuesta.
     const onSend = () => {
+      leaveHero()
       clearTimeout(typingTimer)
       setLook(null)
       go('thinking', undefined, THINKING_TIMEOUT_MS)
@@ -76,6 +85,16 @@ function ElisaAvatar() {
       avatar.current?.poke('nod')
     }
 
+    // El backend avisa de un cl.ErrorMessage (ver avatar_alert en src/emotion.py).
+    const onWindowMessage = (e) => {
+      const d = e.data
+      if (!d || d.source !== 'elisa' || d.event !== 'error') return
+      leaveHero()
+      clearTimeout(typingTimer)
+      setLook(null)
+      go(ERROR_STATE, undefined, ERROR_HOLD_MS)
+    }
+
     const sleepCheck = setInterval(() => {
       if (current === 'idle' && Date.now() - lastActive > SLEEP_AFTER_MS) go('sleeping')
     }, 5000)
@@ -86,6 +105,7 @@ function ElisaAvatar() {
     document.addEventListener('click', onClick, opts)
     document.addEventListener('pointermove', markActive, { capture: true, passive: true })
     window.addEventListener('elisa:signal', onSignal)
+    window.addEventListener('message', onWindowMessage)
 
     return () => {
       document.removeEventListener('input', onInput, opts)
@@ -93,6 +113,8 @@ function ElisaAvatar() {
       document.removeEventListener('click', onClick, opts)
       document.removeEventListener('pointermove', markActive, opts)
       window.removeEventListener('elisa:signal', onSignal)
+      window.removeEventListener('message', onWindowMessage)
+      leaveHero()
       clearInterval(sleepCheck)
       clearTimeout(holdTimer)
       clearTimeout(typingTimer)
@@ -112,7 +134,41 @@ function ElisaAvatar() {
   )
 }
 
+// Texto de bienvenida (se ve solo mientras la pantalla está en modo inicio).
+const hero = document.createElement('div')
+hero.id = 'elisa-hero'
+hero.innerHTML =
+  '<h1>¡Hola! Soy Elisa</h1>' +
+  '<p>Un espacio de escucha y orientación sobre bienestar docente y convivencia universitaria.</p>' +
+  '<p class="elisa-hero-question">¿Sobre qué te gustaría conversar?</p>'
+document.body.appendChild(hero)
+
 const host = document.createElement('div')
 host.id = 'elisa-avatar'
 document.body.appendChild(host)
 createRoot(host).render(<ElisaAvatar />)
+
+if (!window.__dictationListener) {
+  window.__dictationListener = true;
+
+  window.addEventListener('message', (event) => {
+    const data = event.data;
+    if (!data || data.type !== 'dictation' || !data.text) return;
+
+    const box = document.querySelector('#chat-input');
+    if (!box) {
+      console.error('Dictation: no se encontró #chat-input');
+      return;
+    }
+
+    const setter = Object.getOwnPropertyDescriptor(
+      window.HTMLTextAreaElement.prototype,
+      'value'
+    ).set;
+
+    const current = box.value.trim();
+    setter.call(box, current ? `${current} ${data.text}` : data.text);
+    box.dispatchEvent(new Event('input', { bubbles: true }));
+    box.focus();
+  });
+}

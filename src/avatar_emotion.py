@@ -26,7 +26,7 @@ _REACTIONS: dict[str, tuple[str, str | None, int]] = {
 }
 
 
-def avatar_signal(agent: ConversationalAgent | None, emotion: str | None = None) -> cl.CustomElement:
+def avatar_signal(agent: ConversationalAgent | None = None, emotion: str | None = None) -> cl.CustomElement:
     """Elemento invisible que le indica al avatar cómo reaccionar."""
     if emotion is None and agent is not None:
         emotion = agent.last_analysis.get("emotion") 
@@ -36,3 +36,10 @@ def avatar_signal(agent: ConversationalAgent | None, emotion: str | None = None)
         props={"state": state, "face": face, "hold_ms": hold_ms, "ts": int(time.time() * 1000)},
         display="inline",
     )
+
+async def avatar_alert() -> None:
+    """Avisa al avatar de que se envió un mensaje de error."""
+    try:
+        await cl.context.emitter.send_window_message({"source": "elisa", "event": "error"})
+    except Exception:
+        pass  # el aviso al avatar nunca debe romper el manejo del error
