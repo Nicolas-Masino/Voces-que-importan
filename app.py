@@ -1,6 +1,7 @@
 import chainlit as cl
 from src.agent import ConversationalAgent
 from src.config import AgentSettings, configure_logging
+from src.avatar_emotion import avatar_signal, detect_emotion
 from src.empathy import EmpathyLab, format_empathy_evaluation
 from src.journal import JournalSession, format_journal, generate_journal, journal_docx
 import logging
@@ -30,7 +31,8 @@ async def start() -> None:
             "¡Hola! Soy **Elisa**, un espacio de escucha y orientación "
             "sobre bienestar docente y convivencia universitaria.\n\n"
             "¿Cómo te sentís hoy o sobre qué situación te gustaría conversar?"
-        )
+        ),
+        elements=[avatar_signal("greeting")],
     ).send()
     await cl.context.emitter.set_commands(commands)
 
@@ -63,7 +65,7 @@ async def main(msg: cl.Message) -> None:
                 )
                 await cl.Message(
                     content="Tu bitácora está lista para descargar. No se guardó en el servidor.",
-                    elements=[file],
+                    elements=[file, avatar_signal("archievement")],
                 ).send()
                 cl.user_session.set("journal", None)
                 return
@@ -144,7 +146,10 @@ async def main(msg: cl.Message) -> None:
             return
         try:
             response = await empathy_lab.respond(msg.content)
-            await cl.Message(content=response).send()
+            await cl.Message(
+                content=response,
+                elements=[avatar_signal(cl.user_session.get("agent"))],
+            ).send()
         except Exception as e:
             logger.error(f"Error en el laboratorio de empatía: {e}")
             await cl.ErrorMessage(content="No pude continuar la práctica. Intentá nuevamente.").send()
@@ -193,4 +198,5 @@ async def main(msg: cl.Message) -> None:
     if agent.last_sources:
         elements.append(cl.Text(content="**Fuentes y referencias:**\n" + "\n\n".join(agent.last_sources), name="fuentes", display="side"))
 
+    elements.append(avatar_signal(agent))
     await cl.Message(content=response, elements=elements).send()

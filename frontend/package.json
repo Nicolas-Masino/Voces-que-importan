@@ -1,0 +1,16 @@
+{
+  "name": "elisa-avatar-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/main.jsx --bundle --minify --format=iife --jsx=automatic --loader:.json=json --define:process.env.NODE_ENV=\\\"production\\\" --outfile=../public/elisa-avatar.js"
+  },
+  "dependencies": {
+    "@bible-strong/avatar-react": "^1.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  }
+}

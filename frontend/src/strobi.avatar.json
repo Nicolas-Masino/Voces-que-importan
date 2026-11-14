@@ -1,0 +1,54 @@
+{
+  "name": "Strobi",
+  "body": {
+    "primary": {
+      "type": "sphere",
+      "width": 240,
+      "height": 240,
+      "depth": 240.03671875,
+      "roundness": 1
+    },
+    "nodes": []
+  },
+  "colors": {
+    "body": "#5b7fe5",
+    "eyes": "#111316"
+  },
+  "style": {
+    "outline": {
+      "enabled": false,
+      "color": "#111316",
+      "width": 6,
+      "opacity": 1
+    }
+  },
+  "face": {
+    "eyes": {
+      "width": 1,
+      "height": 1,
+      "gap": 1,
+      "shiftY": -0.058333333333333334
+    },
+    "nose": {
+      "enabled": false,
+      "shape": "inverted-triangle",
+      "roundness": 50,
+      "width": 14,
+      "height": 11,
+      "x": 0,
+      "y": 22,
+      "angle": 0
+    },
+    "mouth": {
+      "enabled": false,
+      "shape": "curve",
+      "curve": 45,
+      "width": 20,
+      "height": 6,
+      "x": 0,
+      "y": 35,
+      "angle": 0
+    },
+    "perspective": 1
+  }
+}

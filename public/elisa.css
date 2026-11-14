@@ -1,0 +1,20 @@
+/* Strobi flota arriba a la derecha; no interfiere con el chat. */
+#elisa-avatar {
+  position: fixed;
+  top: 72px;
+  right: 28px;
+  width: 128px;
+  height: 128px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* El cuerpo puede salirse de su caja mientras se mueve. */
+@media (max-width: 900px) {
+  #elisa-avatar {
+    top: 64px;
+    right: 12px;
+    width: 72px;
+    height: 72px;
+  }
+}

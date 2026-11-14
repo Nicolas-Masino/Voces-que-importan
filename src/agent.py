@@ -67,6 +67,7 @@ class ConversationalAgent:
         self.history: list[dict] = []  # Historial en formato de mensajes de OpenAI
         self.metrics = Metrics()
         self.last_sources: list[str] = []
+        self.last_analysis: dict | None = None
 
     async def respond(
         self,
@@ -101,6 +102,7 @@ class ConversationalAgent:
         await report("analysis", "started")
         analysis = await analizar_situacion.ainvoke({"text": message})
         await report("analysis", "completed")
+        self.last_analysis = analysis
         logger.info(f"Análisis de la situación: {analysis}")
         safety = safety_from_llm(analysis=analysis)
         if safety.level == "urgent":
