@@ -83,6 +83,17 @@ class RAGSettings(Settings):
         data = json.loads(raw_data)
         return cls(**data.get('rag', {}))
 
+class AudioSettings(Settings):
+    model: str = "whisper-tiny"
+    device: str = "cpu"  # "cpu" para CPU, "cuda" para GPU si está disponible
+    sample_rate: int = 24000  # Frecuencia de muestreo para el audio (debe ser la misma que figura en .chainlit/config.toml)
+
+    @classmethod
+    def load(cls, json_path: str = CONFIG_FILE) -> "AudioSettings":
+        raw_data = Path(json_path).read_text(encoding="utf-8")
+        data = json.loads(raw_data)
+        return cls(**data.get('audio', {}))
+
 class EmpathyLabSettings(Settings):
     weights: dict
 
@@ -110,3 +121,4 @@ class EmpathyLabSettings(Settings):
 AGENT_SETTINGS = AgentSettings.load()
 RAG_SETTINGS = RAGSettings.load()
 EMPATHY_LAB_SETTINGS = EmpathyLabSettings.load()
+AUDIO_SETTINGS = AudioSettings.load()

@@ -1,4 +1,9 @@
 {
+    "audio": {
+        "model": "tiny",
+        "device": "cpu",
+        "sample_rate": 24000
+    },
     "rag": {
         "corpus_dir": "data/sources",
         "chroma_dir": "chroma_db",

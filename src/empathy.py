@@ -73,7 +73,7 @@ Respondé solamente con la intervención del PERSONAJE. No escribas las etiqueta
 "Practicante", "Personaje", "Coordinador" ni explicaciones sobre el ejercicio.
 """
 
-EVALUATION_PROMPT = """Evaluá una práctica ficticia de escucha empática.
+EVALUATION_PROMPT = """Evaluá la empatía del usario (PRACTICANTE) en una convcersación ficticia.
 Usá exclusivamente la conversación incluida entre las etiquetas <conversacion>.
 No diagnostiques ni evalúes la personalidad. Puntúa cada criterio de 1 a 5 y da
 devoluciones accionables, cálidas y breves. No inventes hechos que no aparezcan.
@@ -122,7 +122,7 @@ def format_empathy_evaluation(evaluation: EmpathyEvaluation) -> str:
         ("No juzgar ni minimizar", evaluation.non_judgment),
         ("Orientación y próximos pasos", evaluation.guidance),
     ]
-    lines = ["### Devolución del laboratorio de empatía", ""]
+    lines = ["### Devolución del laboratorio de empatía\n"]
     lines.extend(f"- **{label}: {criterion.score}/5** — {criterion.feedback}" for label, criterion in criteria)
     if evaluation.strengths:
         lines.extend(["", "**Fortalezas**", *[f"- {item}" for item in evaluation.strengths]])

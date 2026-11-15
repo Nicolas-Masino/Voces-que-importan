@@ -1,0 +1,213 @@
+/* ===== Paleta: primario #6366F1, secundario #8B5CF6 ===== */
+:root {
+  --elisa-primary: #6366f1;
+  --elisa-secondary: #8b5cf6;
+  --elisa-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+/* ===== Avatar: esquina superior izquierda en conversación, centrado en la bienvenida ===== */
+#elisa-avatar {
+  position: fixed;
+  top: 140px;
+  left: 180px;
+  width: 80px;
+  height: 80px;
+  z-index: 20;
+  pointer-events: none;
+  transition: top 0.6s ease, left 0.6s ease, width 0.6s ease, height 0.6s ease;
+}
+
+/* Halo luminoso detrás del avatar, como el orbe de las referencias. */
+#elisa-avatar::before {
+  content: "";
+  position: absolute;
+  inset: -28%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(139, 92, 246, 0.42) 0%,
+    rgba(99, 102, 241, 0.22) 45%,
+    transparent 70%
+  );
+  filter: blur(18px);
+  animation: elisa-glow 5s ease-in-out infinite;
+}
+
+@keyframes elisa-glow {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+body.elisa-hero #elisa-avatar {
+  top: 14vh;
+  left: calc(50% - 60px);
+  width: 120px;
+  height: 120px;
+}
+
+/* ===== Fondo: tinte suave en la bienvenida (sobre la UI, sin bloquear clics) ===== */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  background:
+    radial-gradient(60% 45% at 50% 22%, rgba(139, 92, 246, 0.14), transparent 70%),
+    radial-gradient(50% 40% at 85% 90%, rgba(99, 102, 241, 0.10), transparent 70%);
+}
+body.elisa-hero::before {
+  opacity: 1;
+}
+
+/* ===== Saludo: línea con degradé, pregunta grande, descripción tenue ===== */
+#elisa-hero {
+  position: fixed;
+  left: 50%;
+  top: calc(14vh + 140px);
+  transform: translateX(-50%);
+  width: min(560px, 88vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 19;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  color: hsl(var(--foreground, 0 0% 10%));
+}
+
+body.elisa-hero #elisa-hero {
+  opacity: 1;
+}
+
+#elisa-hero h1 {
+  order: 1;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 0.25rem;
+  background: var(--elisa-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+#elisa-hero p.elisa-hero-question {
+  order: 2;
+  font-size: 1.9rem;
+  font-weight: 650;
+  line-height: 1.2;
+  margin: 0 0 0.75rem;
+  color: hsl(var(--foreground, 0 0% 10%));
+}
+
+#elisa-hero p:not(.elisa-hero-question) {
+  order: 3;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+  color: hsl(var(--muted-foreground, 0 0% 40%));
+}
+
+/* ===== Pantalla de bienvenida de Chainlit: sin logo, cuadro de mensaje más abajo ===== */
+body.elisa-hero img.logo,
+body.elisa-hero img[alt="logo"],
+body.elisa-hero img[alt="watermark"] {
+  display: none !important;
+}
+
+/* Al enviar el primer mensaje se quita la clase y Chainlit lo ubica abajo. */
+body.elisa-hero #message-composer {
+  transform: translateY(min(34vh, 260px));
+}
+
+/* ===== Cuadro de mensaje: redondeado, sombra y borde con tinte violeta ===== */
+#message-composer {
+  border-radius: 1.5rem;
+  border: 1px solid rgba(99, 102, 241, 0.22);
+  box-shadow: 0 10px 34px rgba(99, 102, 241, 0.12);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+#message-composer:focus-within {
+  border-color: var(--elisa-primary);
+  box-shadow: 0 10px 34px rgba(99, 102, 241, 0.2), 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* Botón de enviar con el degradé de la marca. */
+#chat-submit {
+  background-image: var(--elisa-gradient);
+  border: 0;
+}
+
+/* Oculta el círculo gris de "esperando respuesta": Strobi ya muestra que piensa. */
+.loading-indicator,
+.animate-pulse.rounded-full {
+  display: none !important;
+}
+
+/* Oculta el canvas Listening cuando se graba un audio */
+div.flex.items-center.gap-1:has(> canvas) > div.text-muted-foreground {
+  display: none !important;
+}
+
+/* ===== Tipografía (la fuente principal, Inter, la carga theme.json) ===== */
+/* Fuente monoespaciada limpia para bloques de código */
+code, pre, kbd, samp {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+/* ===== Pantallas chicas (mantiene el avatar a la izquierda) ===== */
+@media (max-width: 900px) {
+  #elisa-avatar {
+    top: 64px;
+    left: 12px;
+    width: 72px;
+    height: 72px;
+  }
+  body.elisa-hero #elisa-avatar {
+    top: 10vh;
+    left: calc(50% - 55px);
+    width: 110px;
+    height: 110px;
+  }
+  #elisa-hero {
+    top: calc(10vh + 130px);
+  }
+  #elisa-hero h1 {
+    font-size: 1.25rem;
+  }
+  #elisa-hero p.elisa-hero-question {
+    font-size: 1.5rem;
+  }
+}
+
+/* Poca altura: evita que el saludo choque con el cuadro de texto. */
+@media (max-height: 640px) {
+  #elisa-hero p:not(.elisa-hero-question) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #elisa-avatar,
+  #elisa-hero,
+  body::before {
+    transition: none;
+  }
+  #elisa-avatar::before {
+    animation: none;
+  }
+}
+
+/* Panel abierto: el avatar se desvanece para no interferir. */
+#elisa-avatar {
+  transition: top 0.6s ease, left 0.6s ease, width 0.6s ease, height 0.6s ease, opacity 0.25s ease;
+}
+body.elisa-panel-open #elisa-avatar {
+  opacity: 0;
+}
