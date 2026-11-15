@@ -14,7 +14,7 @@ Es condición suficiente que cualquiera de las dos pruebas fallen para detener e
 
 ## Ejecutar
 
-Para instalar el programa se debe crear un entorno virtual con todas las dependencias exhibidas en `requirements.txt`. 
+Para instalar el programa se debe crear un entorno virtual con todas las dependencias exhibidas en `requirements.txt` y tener instalado Node.js 18 o superior para poder compilar el avatar. 
 Se debe crear un archivo `.env` similar a `.env.example` para especificar el modelo LLM que se utilizara y guardar la API key de su servicio de IA.
 
 ```bash
@@ -30,6 +30,16 @@ El comando anterior inicia la aplicación sin recarga automática. Si necesario 
 **NOTA**: Existe una incompatibilidad entre Python 3.14 y el watcher de Chainlit, por lo que se recomienda usar Python 3.12.
 
 El adaptador de modelo está desacoplado para agregar un proveedor posteriormente sin modificar la interfaz Chainlit.
+
+En el caso que se desee modificar `main.jsx` se debe compilar el blundler de la siguiente manera:
+
+```bash
+cd frontend
+npm install
+npm run build
+```
+
+Esto actualiza el archivo public/elisa-avatar.js. 
 
 ## Evaluación
 
@@ -129,3 +139,5 @@ Al finalizar con las respuestas, se le exhibe al usuario la bitácora final resu
 El agente tiene un módulo especializado para centralizar todas las configuraciones, ya sea del agente mismo (como modelo, api key, proveedor, etc), del RAG (directorio de Chroma, modelo de embeddings, chunks, etc.) y del laboratorio de empatía. Estas configuraciones se lee en gran parte desde el archivo `config.json` a excepción de las configuración del agente que se leen del archivo `.env`. 
 
 Dentro del archivo `config.json` también se encuentra la lista de tópicos que el agente puede manejar y espera, además de los recursos.
+
+En cuanto al audio, `config.json` ofrece un apartado para modificar modelo, ratio de muestreo y el dispositivo. Sin embargo, `sample_rate` debe ser exactamente el mismo que figura en el archivo `config.toml` de Chainlit, de no ser así, el modelo estará desfasado y no lo procesará. Procurar mantener actualizado el mismo parámetro en ambos archivos.
