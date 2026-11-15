@@ -7,6 +7,7 @@ langchain-core==1.7.6
 langchain-openai==1.7.4
 pydantic==2.14.3
 pydantic-settings==2.16.2
+faster-whisper==0.2.0
 
 # Recuperación aumentada (RAG)
 chromadb==1.5.9
