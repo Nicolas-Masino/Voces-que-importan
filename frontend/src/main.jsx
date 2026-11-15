@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createAvatar } from '@bible-strong/avatar-react'
-import { stateNames } from '@bible-strong/avatar-core'
 import strobi from './strobi.avatar.json'
 
 // Valida el archivo una sola vez.
@@ -13,10 +12,51 @@ const SLEEP_AFTER_MS = 90000 // inactividad total: se duerme
 const ERROR_HOLD_MS = 10000
 const ERROR_STATE = 'alerting'
 
+// Paneles que, al abrirse, hacen que el avatar se desvanezca (cl.Text en el panel lateral, diálogos).
+const PANEL_SELECTORS = [
+  '#side-view-title',
+  '#side-view-content',
+  '[data-testid="element-view"]',
+  '[role="dialog"]',
+]
+
 function ElisaAvatar() {
   const [view, setView] = useState({ state: 'idle', face: undefined })
   const [look, setLook] = useState(null)
+  const [panelOpen, setPanelOpen] = useState(false)
   const avatar = useRef(null)
+
+  // Desvanece el avatar mientras hay un panel abierto y lo recupera al cerrarse.
+  // No se desmonta: solo se pausa y se oculta con CSS (clase en <body>).
+  useEffect(() => {
+    let last = null
+    const isShown = (el) => el.getClientRects().length > 0 // montado Y visible
+
+    const check = () => {
+      const hit = PANEL_SELECTORS.find((sel) =>
+        Array.from(document.querySelectorAll(sel)).some(isShown)
+      )
+      const open = Boolean(hit)
+      if (open === last) return
+      last = open
+      document.body.classList.toggle('elisa-panel-open', open)
+      setPanelOpen(open)
+      console.info('[elisa] panel', open ? `abierto (${hit})` : 'cerrado')
+    }
+
+    // Altas y bajas de nodos, más un sondeo liviano por si el panel
+    // se muestra u oculta cambiando atributos en vez de montarse.
+    const observer = new MutationObserver(check)
+    observer.observe(document.body, { childList: true, subtree: true })
+    const poll = setInterval(check, 500)
+    check()
+
+    return () => {
+      observer.disconnect()
+      clearInterval(poll)
+      document.body.classList.remove('elisa-panel-open')
+    }
+  }, [])
 
   useEffect(() => {
     const loadedAt = Date.now()
@@ -68,11 +108,14 @@ function ElisaAvatar() {
     const onKeyDown = (e) => {
       markActive()
       const box = e.target.closest?.('#chat-input')
-      if (box && e.key === 'Enter' && !e.shiftKey && box.textContent.trim()) onSend()
+      const text = box ? (box.value ?? box.textContent ?? '') : ''
+      if (box && e.key === 'Enter' && !e.shiftKey && text.trim()) onSend()
     }
     const onClick = (e) => {
       markActive()
-      if (e.target.closest?.('#chat-submit')) onSend()
+      if (e.target.closest?.('#chat-submit') ||
+          e.target.closest?.('#starters')
+      ) onSend()
     }
 
     // El backend informa la emoción detectada (ver public/elements/AvatarSignal.jsx).
@@ -127,6 +170,7 @@ function ElisaAvatar() {
       state={view.state}
       face={view.face}
       lookAt={look}
+      paused={panelOpen}
       followPointer
       size="100%"
       ariaLabel="Strobi, tu acompañante en la conversación"
@@ -139,8 +183,7 @@ const hero = document.createElement('div')
 hero.id = 'elisa-hero'
 hero.innerHTML =
   '<h1>¡Hola! Soy Elisa</h1>' +
-  '<p>Un espacio de escucha y orientación sobre bienestar docente y convivencia universitaria.</p>' +
-  '<p class="elisa-hero-question">¿Sobre qué te gustaría conversar?</p>'
+  '<p class="elisa-hero-question">¿Sobre qué te gustaría hablar?</p>'
 document.body.appendChild(hero)
 
 const host = document.createElement('div')

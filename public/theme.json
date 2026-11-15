@@ -1,0 +1,35 @@
+{
+  "custom_fonts": [
+    "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+  ],
+  "variables": {
+    "light": {
+      "--font-sans": "'Inter', sans-serif",
+      "--radius": "1rem",
+      "--primary": "239 84% 67%",
+      "--primary-foreground": "0 0% 100%",
+      "--ring": "239 84% 67%",
+      "--accent": "243 100% 97%",
+      "--accent-foreground": "239 50% 25%",
+      "--secondary": "258 100% 96%",
+      "--secondary-foreground": "258 60% 30%",
+      "--border": "239 40% 90%",
+      "--input": "239 40% 90%"
+    },
+    "dark": {
+      "--font-sans": "'Inter', sans-serif",
+      "--radius": "1rem",
+      "--background": "250 25% 7%",
+      "--card": "250 22% 10%",
+      "--primary": "239 84% 67%",
+      "--primary-foreground": "0 0% 100%",
+      "--ring": "239 84% 67%",
+      "--accent": "250 22% 15%",
+      "--accent-foreground": "0 0% 95%",
+      "--secondary": "258 30% 20%",
+      "--secondary-foreground": "0 0% 95%",
+      "--border": "250 15% 20%",
+      "--input": "250 15% 20%"
+    }
+  }
+}
