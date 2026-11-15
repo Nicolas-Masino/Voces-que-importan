@@ -132,7 +132,7 @@ ipython_config.py
 #pixi.lock
 #   Pixi creates a virtual environment in the .pixi directory, just like venv module creates one
 #   in the .chainlit/
-.chainlit/
+.chainlit/translations/
 .venv directory. It is recommended not to include this directory in version control.
 .pixi
 
