@@ -15,7 +15,7 @@ _REACTIONS: dict[str, tuple[str, str | None, int]] = {
     "alegria": ("happy", None, 8000),
     "tristeza": ("sad", None, 12000),
     "enojo": ("listening", "calm", 12000),
-    "neutral": ("idle", None, 6000),
+    "neutral": ("idle", None, 8000),
     "miedo": ("listening", "calm", 12000),
     "sorpresa": ("surprised", None, 6000),
     "disgusto": ("listening", "squinted", 8000),
@@ -23,17 +23,21 @@ _REACTIONS: dict[str, tuple[str, str | None, int]] = {
     "celebrate": ("celebrate", None, 8000),
     "achievement": ("finished", None, 8000),
     "sleeping": ("sleeping", None, 8000),
+    "failed": ("blocked", None, 8000),
+    "curious": ("curious", None, 8000),
 }
 
-
-def avatar_signal(agent: ConversationalAgent | None = None, emotion: str | None = None) -> cl.CustomElement:
+def avatar_signal(agent: ConversationalAgent | None = None, emotion: str | None = None, text: str | None = None) -> cl.CustomElement:
     """Elemento invisible que le indica al avatar cómo reaccionar."""
-    if emotion is None and agent is not None:
+    if emotion is None and agent:
         emotion = agent.last_analysis.get("emotion") 
     state, face, hold_ms = _REACTIONS.get(emotion, _REACTIONS["neutral"])
+    props = {"state": state, "face": face, "hold_ms": hold_ms, "ts": int(time.time() * 1000)}
+    if text is not None:
+        props["text"] = text
     return cl.CustomElement(
         name="AvatarSignal",
-        props={"state": state, "face": face, "hold_ms": hold_ms, "ts": int(time.time() * 1000)},
+        props=props,
         display="inline",
     )
 

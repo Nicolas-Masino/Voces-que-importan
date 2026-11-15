@@ -131,7 +131,7 @@ class ConversationalAgent:
             logger.info(f"Recursos encontrados: {resources.get('resources')}")
             if resources.get("resources"):
                 self.last_sources.extend(
-                    f"**{r.name} ({r.scope})** — {r.description}\n  {r.url}"
+                    f"**{r.name} ({r.scope})** — {r.description}\n  {r.url}\n\n"
                     for r in resources.get("resources", [])
                 )
 

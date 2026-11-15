@@ -112,7 +112,8 @@ async def main(msg: cl.Message) -> None:
                     "Te voy a hacer algunas preguntas. No incluyas datos que no quieras "
                     "presentar ante la oficina de convivencia.\n\n"
                     f"{JournalSession().current_question}"
-                )
+                ),
+                elements=[avatar_signal()]
             ).send()
         return
 
@@ -121,7 +122,9 @@ async def main(msg: cl.Message) -> None:
         if journal.reviewing:
             if msg.content.strip().lower() in {"confirmar", "descargar"}:
                 if journal.entry is None:
-                    await cl.Message(content="No hay un resumen listo para descargar.").send()
+                    await cl.Message(content="No hay un resumen listo para descargar.",
+                            elements=[avatar_signal(emotion="failed")]
+                    ).send()
                     return
                 file = cl.File(
                     name="bitacora_hechos.docx",
@@ -144,14 +147,12 @@ async def main(msg: cl.Message) -> None:
                     ).send()
                     await avatar_alert()
                     return
-                await cl.Message(content="Bien! dime que tal ahora?",
-                    elements=[cl.Text(content=format_journal(journal.entry), name="Resumen para revisión", display="side")]
-                ).send()
+                await cl.Message(content=format_journal(journal.entry), elements=[avatar_signal()]).send()
                 return
 
         journal.record(msg.content)
         if not journal.complete:
-            await cl.Message(content=journal.current_question).send()
+            await cl.Message(content=journal.current_question, elements=[avatar_signal()]).send()
             return
         try:
             journal.entry = await generate_journal(AgentSettings.load(), journal.answers)
@@ -163,10 +164,7 @@ async def main(msg: cl.Message) -> None:
             await avatar_alert()
             return
         journal.reviewing = True
-        await cl.Message(content="Escribí `confirmar` para descargar o una corrección con el formato "
-                        "`campo: corrección`.",
-            elements=[cl.Text(content=format_journal(journal.entry), name="Resumen para revisión", display="side")]
-        ).send()
+        await cl.Message(content=format_journal(journal.entry), elements=[avatar_signal()]).send()
         return
 
     empathy_lab = cl.user_session.get("empathy_lab")
@@ -175,30 +173,29 @@ async def main(msg: cl.Message) -> None:
         cl.user_session.set("empathy_lab", EmpathyLab(AgentSettings.load()))
         await cl.Message(
             content="Describí una conversación difícil que quieras practicar. "
-                    "Es una simulación ficticia: no incluyas datos personales reales."
+                    "Es una simulación ficticia: no incluyas datos personales reales.",
+            elements=[avatar_signal()]
         ).send()
         return
 
     if msg.command == "Evaluar empatía":
         if not isinstance(empathy_lab, EmpathyLab):
-            await cl.Message(content="No hay un laboratorio de empatía activo.").send()
+            await cl.Message(content="No hay un laboratorio de empatía activo.", elements=[avatar_signal(emotion="failed")]).send()
             return
         try:
             evaluation = await empathy_lab.evaluate()
         except ValueError as exc:
-            await cl.Message(content=str(exc)).send()
+            await cl.Message(content=str(exc), elements=[avatar_signal(emotion="failed")]).send()
         else:
-            await cl.Message(content="Perfecto! Aquí te entrego la evaluación",
-                elements=[cl.Text(content=format_empathy_evaluation(evaluation), name="Devolución del laboratorio de empatía", display="side")]
-            ).send()
+            await cl.Message(content=format_empathy_evaluation(evaluation), elements=[avatar_signal(emotion="achievement")]).send()
         return
 
     if msg.command == "Salir de empatía":
         if not isinstance(empathy_lab, EmpathyLab):
-            await cl.Message(content="No hay un laboratorio de empatía activo.").send()
+            await cl.Message(content="No hay un laboratorio de empatía activo.", elements=[avatar_signal(emotion="failed")]).send()
             return
         cl.user_session.set("empathy_lab", None)
-        await cl.Message(content="Saliste del laboratorio de empatía.").send()
+        await cl.Message(content="Saliste del laboratorio de empatía.", elements=[avatar_signal()]).send()
         return
 
     if isinstance(empathy_lab, EmpathyLab):
@@ -206,18 +203,19 @@ async def main(msg: cl.Message) -> None:
             try:
                 empathy_lab.begin(msg.content)
             except ValueError as exc:
-                await cl.Message(content=str(exc)).send()
+                await cl.Message(content=str(exc), elements=[avatar_signal(emotion="failed")]).send()
                 return
             await cl.Message(
                 content="Listo. Yo voy a interpretar a la otra persona. "
-                        "Escribí tu primera respuesta; cuando termines, usá `/Evaluar empatía`."
+                        "Escribí tu primera respuesta; cuando termines, usá `/Evaluar empatía`.",
+                elements=[avatar_signal(emotion="curious")]
             ).send()
             return
         try:
             response = await empathy_lab.respond(msg.content)
             await cl.Message(
                 content=response,
-                elements=[avatar_signal(agent=cl.user_session.get("agent"))],
+                elements=[avatar_signal()]
             ).send()
         except Exception as e:
             logger.error(f"Error en el laboratorio de empatía: {e}")
@@ -268,7 +266,7 @@ async def main(msg: cl.Message) -> None:
 
     elements = []
     if agent.last_sources:
-        elements.append(cl.Text(content=agent.last_sources, name="Fuentes y referencias:", display="side"))
+        elements.append(cl.Text(content="\n".join(agent.last_sources), name="Fuentes y referencias:", display="side"))
 
     elements.append(avatar_signal(agent=agent))
     await cl.Message(content=response, elements=elements).send()
