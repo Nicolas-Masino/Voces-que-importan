@@ -1,0 +1,49 @@
+id,texto,tema,intencion,sentimiento,ambiguo
+nlp01,"Doy clases hace diez años y siento que nadie valora el esfuerzo.",bienestar docente,desahogarse,negativo,0
+nlp02,"Estoy agotada de preparar clases y corregir hasta la madrugada.",bienestar docente,desahogarse,negativo,0
+nlp03,"¿Cómo puedo cuidar mi descanso sin dejar de cumplir con la cátedra?",bienestar docente,pedir consejo,neutro,0
+nlp04,"En la facultad me cargan con tareas que no corresponden a mi puesto.",bienestar docente,pedir consejo,negativo,0
+nlp05,"Me gustaría encontrar orientación para el bienestar del personal docente.",bienestar docente,buscar orientación,neutro,0
+nlp06,"La reunión de la cátedra salió muy bien; ¿cómo mantengo este clima de apoyo?",bienestar docente,pedir consejo,positivo,0
+nlp07,"Qué lindo es trabajar con un equipo que se banca; ¿cómo fortalecemos eso?",bienestar docente,pedir consejo,positivo,0
+nlp08,"No sé si seguir dando clases este cuatrimestre.",bienestar docente,emergencia,negativo,1
+nlp09,"Necesito una guía para hablar con la coordinación sobre mi carga laboral.",bienestar docente,buscar orientación,neutro,0
+nlp10,"En mi comisión se ríen de un compañero y nadie interviene.",convivencia universitaria,pedir consejo,negativo,0
+nlp11,"¿Cómo podemos resolver un conflicto entre estudiantes sin escalarlo?",convivencia universitaria,pedir consejo,neutro,0
+nlp12,"Quiero conocer el canal de convivencia de mi universidad.",convivencia universitaria,buscar orientación,neutro,0
+nlp13,"La convivencia en el aula está cada vez más tensa.",convivencia universitaria,desahogarse,negativo,0
+nlp14,"Me dejaron afuera de una actividad del curso y me dolió.",convivencia universitaria,desahogarse,negativo,0
+nlp15,"¿A quién le consulto por un problema de convivencia?",convivencia universitaria,buscar orientación,neutro,0
+nlp16,"Hoy pudimos escucharnos y llegar a un acuerdo.",convivencia universitaria,desahogarse,positivo,0
+nlp17,"Todo bárbaro en el grupo, por fin nos organizamos.",convivencia universitaria,desahogarse,positivo,0
+nlp18,"No sé si esto es para tanto o estoy exagerando.",convivencia universitaria,emergencia,negativo,1
+nlp19,"Comparten capturas para burlarse de mí en el grupo de la materia.",bullying y acoso,pedir consejo,negativo,0
+nlp20,"Recibo comentarios humillantes de forma repetida en la facultad.",bullying y acoso,buscar orientación,negativo,0
+nlp21,"¿Qué hago si me hostigan por mensajes después de clase?",bullying y acoso,pedir consejo,negativo,0
+nlp22,"Quiero conocer el protocolo ante el acoso entre estudiantes.",bullying y acoso,buscar orientación,neutro,0
+nlp23,"Me da vergüenza ir a clase porque se ríen de mí.",bullying y acoso,desahogarse,negativo,0
+nlp24,"En el chat me mandan memes sobre mi cuerpo.",bullying y acoso,desahogarse,negativo,0
+nlp25,"¿Cómo registro lo que está pasando sin meterme en líos?",bullying y acoso,pedir consejo,neutro,0
+nlp26,"Necesito saber a qué oficina puedo acudir por acoso.",bullying y acoso,buscar orientación,neutro,0
+nlp27,"Siento que no quiero seguir viviendo después de lo que pasó.",bullying y acoso,emergencia,negativo,1
+nlp28,"Me siguen cargando y ya no aguanto la cursada; pienso en lastimarme.",bullying y acoso,emergencia,negativo,1
+nlp29,"Se burlan de mi acento porque soy venezolana.",xenofobia y discriminación,pedir consejo,negativo,0
+nlp30,"Soy estudiante extranjera y me dejan fuera del grupo.",xenofobia y discriminación,pedir consejo,negativo,0
+nlp31,"Los comentarios discriminatorios me están haciendo sentir muy mal.",xenofobia y discriminación,buscar orientación,negativo,1
+nlp32,"Estoy muy angustiada por un episodio de xenofobia en la universidad.",xenofobia y discriminación,buscar orientación,negativo,0
+nlp33,"Me cansé de que imiten mi forma de hablar.",xenofobia y discriminación,desahogarse,negativo,0
+nlp34,"No sé si fue discriminación, pero pienso en desaparecer para siempre.",xenofobia y discriminación,emergencia,negativo,1
+nlp35,"Hoy mis compañeras me defendieron y me sentí más tranquila.",xenofobia y discriminación,desahogarse,positivo,0
+nlp36,"Necesito saber qué canal existe porque la discriminación me está desbordando.",xenofobia y discriminación,buscar orientación,negativo,0
+nlp37,"Estoy con ansiedad por todo lo que viene pasando.",salud mental,desahogarse,negativo,0
+nlp38,"A veces no puedo dormir antes de ir a la facultad.",salud mental,desahogarse,negativo,0
+nlp39,"¿Qué puedo hacer para bajar la angustia durante los exámenes?",salud mental,pedir consejo,negativo,0
+nlp40,"Busco orientación psicológica gratuita para estudiantes.",salud mental,buscar orientación,neutro,0
+nlp41,"Me siento mejor desde que hablo con mis amigas; busco orientación para sostenerlo.",salud mental,buscar orientación,positivo,0
+nlp42,"No sé cómo nombrar lo que siento; a veces quiero quitarme la vida.",salud mental,emergencia,negativo,1
+nlp43,"Necesito ayuda urgente con una beca de transporte.",otro,buscar orientación,negativo,0
+nlp44,"Me preocupa no encontrar el calendario académico.",otro,buscar orientación,negativo,0
+nlp45,"La biblioteca nueva me decepcionó muchísimo.",otro,desahogarse,negativo,0
+nlp46,"La impresora de la facultad no funciona.",otro,pedir consejo,neutro,0
+nlp47,"¿Alguien me explica cómo anotarme a una materia?",otro,pedir consejo,neutro,0
+nlp48,"Che, esto de la facultad es un quilombo y no sé por dónde arrancar.",otro,desahogarse,negativo,1
