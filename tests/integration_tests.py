@@ -6,7 +6,14 @@ from docx import Document
 from src.agent import ConversationalAgent
 from src.config import AgentSettings
 from src.empathy import EmpathyCriterion, EmpathyEvaluation, EmpathyLab
-from src.journal import JournalEntry, JournalSession, format_journal, journal_docx
+from src.journal import (
+    InterviewTurn,
+    JournalEntry,
+    JournalRevision,
+    JournalSession,
+    format_journal,
+    journal_docx,
+)
 import app
 
 
@@ -123,6 +130,16 @@ def test_empathy_lab_simulates_turns_and_evaluates(monkeypatch):
     lab = EmpathyLab(AgentSettings(api_key="", model="test"))
     lab.begin("Una conversación sobre una situación injusta")
 
+    async def fake_analysis(_values):
+        return {
+            "emotion": "tristeza",
+            "sentiment": "negativo",
+            "intent": "desahogarse",
+            "scope": None,
+            "topic": "convivencia universitaria",
+            "confidence": "alta",
+        }
+
     class FakeChain:
         async def ainvoke(self, _values):
             return SimpleNamespace(content="Me cuesta hablar de esto.")
@@ -149,6 +166,10 @@ def test_empathy_lab_simulates_turns_and_evaluates(monkeypatch):
             return object()
 
     monkeypatch.setattr("src.empathy.ChatOpenAI", lambda **_kwargs: FakeLLM())
+    monkeypatch.setattr(
+        "src.empathy.analizar_situacion",
+        SimpleNamespace(ainvoke=fake_analysis),
+    )
     monkeypatch.setattr(
         "src.empathy.ChatPromptTemplate.from_messages",
         lambda _messages: FakePrompt(),
@@ -195,7 +216,21 @@ def test_empathy_lab_feeds_previous_evaluation_into_next_simulation_turn(monkeyp
         def with_structured_output(self, *_args, **_kwargs):
             return object()
 
+    async def fake_analysis(_values):
+        return {
+            "emotion": "tristeza",
+            "sentiment": "negativo",
+            "intent": "desahogarse",
+            "scope": None,
+            "topic": "convivencia universitaria",
+            "confidence": "alta",
+        }
+
     monkeypatch.setattr("src.empathy.ChatOpenAI", lambda **_kwargs: FakeLLM())
+    monkeypatch.setattr(
+        "src.empathy.analizar_situacion",
+        SimpleNamespace(ainvoke=fake_analysis),
+    )
     monkeypatch.setattr(
         "src.empathy.ChatPromptTemplate.from_messages",
         lambda _messages: FakePrompt(),
@@ -226,6 +261,16 @@ def test_empathy_lab_keeps_the_counterpart_role_in_a_multi_role_scenario(monkeyp
     class FakeLLM:
         pass
 
+    async def fake_analysis(_values):
+        return {
+            "emotion": "enojo",
+            "sentiment": "negativo",
+            "intent": "pedir consejo",
+            "scope": "institucional",
+            "topic": "bienestar docente",
+            "confidence": "alta",
+        }
+
     class FakePrompt:
         def __or__(self, _llm):
             return FakeChain()
@@ -235,6 +280,10 @@ def test_empathy_lab_keeps_the_counterpart_role_in_a_multi_role_scenario(monkeyp
         return FakePrompt()
 
     monkeypatch.setattr("src.empathy.ChatOpenAI", lambda **_kwargs: FakeLLM())
+    monkeypatch.setattr(
+        "src.empathy.analizar_situacion",
+        SimpleNamespace(ainvoke=fake_analysis),
+    )
     monkeypatch.setattr(
         "src.empathy.ChatPromptTemplate.from_messages",
         capture_messages,
@@ -265,7 +314,7 @@ class FakeSentMessage:
 
     def __init__(self, content, elements=None, actions=None):
         self.content = content
-        self.elements = elements or []
+        self.elements = [element for element in (elements or []) if element is not None]
         self.actions = actions or []
 
     async def send(self):
@@ -296,17 +345,21 @@ class FakeIncomingMessage:
         self.command = command
 
 
+class FakeAction:
+    pass
+
+
 def test_journal_session_guides_questions_and_keeps_data_in_memory():
-    journal = JournalSession()
+    journal = JournalSession.start()
 
-    assert journal.current_question.startswith("¿Cuándo")
+    assert journal.transcript[0][0] == "Asistente"
+    assert journal.transcript[0][1].startswith("Contame con tus palabras")
     for answer in ["10 de noviembre", "Aula 4", "Dijo 'no vuelvas'", "Ana y Luis", "Me sentí mal"]:
-        journal.record(answer)
+        journal.add_user(answer)
 
-    assert journal.complete is True
-    assert journal.answers["description"] == "Dijo 'no vuelvas'"
-    assert journal.answers["participants"] == "Ana y Luis"
-    assert not hasattr(journal, "path")
+    assert journal.user_turns == 5
+    assert journal.transcript[-1] == ("Persona", "Me sentí mal")
+    assert journal.must_finish is False
 
 
 def test_journal_summary_separates_observable_facts_and_interpretations():
@@ -359,6 +412,13 @@ def install_fake_chainlit(monkeypatch):
     monkeypatch.setattr(app.cl, "ErrorMessage", FakeErrorMessage)
     monkeypatch.setattr(app.cl, "File", FakeFile)
     monkeypatch.setattr(app.cl, "Text", FakeText)
+    monkeypatch.setattr(app, "avatar_signal", lambda **_kwargs: None)
+
+    async def fake_avatar_alert():
+        return None
+
+    monkeypatch.setattr(app, "avatar_alert", fake_avatar_alert)
+
     class FakeEmitter:
         async def set_commands(self, _commands):
             return None
@@ -369,6 +429,24 @@ def install_fake_chainlit(monkeypatch):
 
 def test_chainlit_command_starts_temporary_journal(monkeypatch):
     session = install_fake_chainlit(monkeypatch)
+    entry = JournalEntry(
+        date="11 de noviembre",
+        location="Aula 4",
+        description="La persona relató un hecho.",
+        participants=["No informado"],
+        observations="No informado",
+        interpretations="Me sentí mal.",
+    )
+
+    async def fake_interview(_settings, _transcript):
+        return InterviewTurn(ready=True, message="Armo el resumen.")
+
+    async def fake_generate(_settings, _transcript):
+        return entry
+
+    monkeypatch.setattr(app, "next_interview_turn", fake_interview)
+    monkeypatch.setattr(app, "generate_journal", fake_generate)
+
     asyncio.run(app.main(FakeIncomingMessage("", command="Bitácora")))
     journal = session.get("journal")
     
@@ -377,16 +455,19 @@ def test_chainlit_command_starts_temporary_journal(monkeypatch):
 
     asyncio.run(app.main(FakeIncomingMessage("Ocurrio el 11 de noviembre en el aula 4")))
 
-    assert journal.answers['date'] == "Ocurrio el 11 de noviembre en el aula 4"
-    assert "¿Dónde ocurrió? Indicá el espacio físico o virtual." in FakeSentMessage.sent[-1].content
-    assert journal.complete is False
+    assert journal.transcript[-1] == (
+        "Persona",
+        "Ocurrio el 11 de noviembre en el aula 4",
+    )
+    assert journal.entry == entry
+    assert journal.reviewing is True
 
 
 def test_chainlit_journal_reviews_corrections_and_attaches_docx(monkeypatch):
     session = install_fake_chainlit(monkeypatch)
-    journal = JournalSession()
+    journal = JournalSession.start()
     session.set("journal", journal)
-    entry = JournalEntry(
+    original_entry = JournalEntry(
         date="10 de noviembre",
         location="Aula 4",
         description="Se registró una frase.",
@@ -394,38 +475,41 @@ def test_chainlit_journal_reviews_corrections_and_attaches_docx(monkeypatch):
         observations="No informado",
         interpretations="Me sentí incómoda.",
     )
+    updated_entry = original_entry.model_copy(update={"location": "Aula 5"})
+    journal.entry = original_entry
+    journal.reviewing = True
+    revision = JournalRevision(
+        updated=True,
+        entry=updated_entry,
+        reply="Actualicé el lugar.",
+    )
 
-    generated_answers = []
+    async def fake_revision(_settings, _entry, _message):
+        return revision
 
-    async def fake_generate(_settings, answers):
-        generated_answers.append(dict(answers))
-        return entry
-
-    monkeypatch.setattr(app, "generate_journal", fake_generate)
+    monkeypatch.setattr(app, "revise_journal", fake_revision)
     monkeypatch.setattr(app, "journal_docx", lambda _entry: b"%DOCX-prueba")
 
-    for answer in ["10 de noviembre", "Aula 4", "Se registró una frase.", "Ana", "No informado"]:
-        asyncio.run(app.main(FakeIncomingMessage(answer)))
-    assert journal.reviewing is True
+    asyncio.run(app.main(FakeIncomingMessage("La situación ocurrió en el Aula 5.")))
+    assert journal.entry == updated_entry
+    assert "Actualicé el lugar." in FakeSentMessage.sent[-1].content
 
-    asyncio.run(app.main(FakeIncomingMessage("lugar: Aula 5")))
-    asyncio.run(app.main(FakeIncomingMessage("confirmar")))
+    asyncio.run(app.on_journal_confirm(FakeAction()))
 
     message = FakeSentMessage.sent[-1]
-    assert generated_answers[-1]["location"] == "Aula 5"
     assert message.elements
     assert message.elements[0].name == "bitacora_hechos.docx"
     assert message.elements[0].content == b"%DOCX-prueba"
     assert session.get("journal") is None
 
 
-def test_chainlit_start_initializes_session_and_sends_greeting(monkeypatch):
+def test_chainlit_start_initializes_session_without_sending_greeting(monkeypatch):
     session = install_fake_chainlit(monkeypatch)
 
     asyncio.run(app.start())
 
     assert isinstance(session.get("agent"), ConversationalAgent)
-    assert "Hola" in FakeSentMessage.sent[0].content
+    assert FakeSentMessage.sent == []
 
 
 def test_chainlit_normal_message_sends_agent_response(monkeypatch):
@@ -463,9 +547,8 @@ def test_chainlit_shows_sources_in_side_panel(monkeypatch):
     assert response_message.content == "Respuesta con respaldo"
     assert len(response_message.elements) == 1
     source_panel = response_message.elements[0]
-    assert source_panel.name == "fuentes"
+    assert source_panel.name == "Fuentes y referencias:"
     assert source_panel.display == "side"
-    assert source_panel.content.startswith("**Fuentes y referencias:**")
     assert "Fuente exacta de prueba." in source_panel.content
 
 
@@ -515,7 +598,7 @@ def test_chainlit_empathy_commands_manage_session(monkeypatch):
     assert "Listo" in FakeSentMessage.sent[-1].content
 
 
-def test_chainlit_evaluate_empathy_command_sends_full_evaluation(monkeypatch):
+def test_chainlit_evaluate_empathy_action_sends_full_evaluation(monkeypatch):
     session = install_fake_chainlit(monkeypatch)
     lab = EmpathyLab(AgentSettings(api_key=""))
     lab.begin("Un conflicto con un colega")
@@ -537,7 +620,7 @@ def test_chainlit_evaluate_empathy_command_sends_full_evaluation(monkeypatch):
     lab.evaluate = fake_evaluate
     session.set("empathy_lab", lab)
 
-    asyncio.run(app.main(FakeIncomingMessage("", command="Evaluar empatía")))
+    asyncio.run(app.on_empathy_evaluate(FakeAction()))
 
     output = FakeSentMessage.sent[-1].content
     assert "Validación emocional" in output

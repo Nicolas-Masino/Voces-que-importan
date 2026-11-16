@@ -5,7 +5,10 @@ from src.agent import ConversationalAgent
 from src.config import AgentSettings, configure_logging
 from src.avatar_emotion import avatar_signal, avatar_alert
 from src.empathy import EmpathyLab, format_empathy_evaluation
-from src.journal import JournalSession, format_journal, generate_journal, journal_docx
+from src.journal import (
+    JournalSession, format_journal, generate_journal, journal_docx,
+    next_interview_turn, revise_journal,
+)
 from src.audio import speech_to_text
 
 # Crear logger para la interfaz de usuario
@@ -20,8 +23,6 @@ _STEP_LABELS = {
 
 commands = [
     {"id": "Empatía", "icon": "heart", "description": "Iniciar laboratorio de empatía"},
-    {"id": "Evaluar empatía", "icon": "check", "description": "Evaluar la práctica de empatía"},
-    {"id": "Salir de empatía", "icon": "x", "description": "Salir del laboratorio de empatía"},
     {"id": "Bitácora", "icon": "notebook-pen", "description":"Arma un resumen de un hecho"}
 ]
 
@@ -101,101 +102,239 @@ async def set_starters():
         )
     ]
 
+# --------------------------------------------------------------------------- #
+# Bitácora: helpers y actions
+# --------------------------------------------------------------------------- #
+def _journal_actions(with_confirm: bool) -> list[cl.Action]:
+    actions = []
+    if with_confirm:
+        actions.append(cl.Action(
+            name="journal_confirm",
+            payload={},
+            label="Confirmar y descargar",
+            tooltip="Genera el documento Word con la bitácora",
+            icon="file-down",
+        ))
+    actions.append(cl.Action(
+        name="journal_exit",
+        payload={},
+        label="Salir de la bitácora",
+        tooltip="Descarta la bitácora y vuelve a la conversación normal",
+        icon="x",
+    ))
+    return actions
+
+
+async def _clear_journal_actions() -> None:
+    previous = cl.user_session.get("journal_msg")
+    if previous is not None:
+        try:
+            await previous.remove_actions()
+        except Exception as exc:  # el mensaje pudo haberse eliminado
+            logger.debug(f"No se pudieron quitar las actions previas: {exc}")
+        cl.user_session.set("journal_msg", None)
+
+
+async def _send_journal_message(content: str, with_confirm: bool = False) -> None:
+    await _clear_journal_actions()
+    message = cl.Message(
+        content=content,
+        elements=[avatar_signal()],
+        actions=_journal_actions(with_confirm),
+    )
+    await message.send()
+    cl.user_session.set("journal_msg", message)
+
+
+@cl.action_callback("journal_confirm")
+async def on_journal_confirm(action: cl.Action) -> None:
+    journal = cl.user_session.get("journal")
+    await _clear_journal_actions()
+    if not isinstance(journal, JournalSession) or journal.entry is None:
+        await cl.Message(
+            content="No hay un resumen listo para descargar.",
+            elements=[avatar_signal(emotion="failed")],
+        ).send()
+        return
+    file = cl.File(
+        name="bitacora_hechos.docx",
+        content=journal_docx(journal.entry),
+        display="inline",
+    )
+    await cl.Message(
+        content="Tu bitácora está lista para descargar. No se guardó en el servidor.",
+        elements=[file, avatar_signal(emotion="achievement")],
+    ).send()
+    cl.user_session.set("journal", None)
+
+
+@cl.action_callback("journal_exit")
+async def on_journal_exit(action: cl.Action) -> None:
+    await _clear_journal_actions()
+    cl.user_session.set("journal", None)
+    await cl.Message(
+        content="Saliste de la bitácora. No se guardó nada. Podés seguir conversando.",
+        elements=[avatar_signal()],
+    ).send()
+
+
+async def _handle_journal_message(journal: JournalSession, text: str) -> None:
+    settings = AgentSettings.load()
+
+    # Fase de revisión: el modelo decide si hay que modificar el resumen.
+    if journal.reviewing and journal.entry is not None:
+        try:
+            revision = await revise_journal(settings, journal.entry, text)
+        except Exception as exc:
+            logger.error(f"Error al actualizar la bitácora: {exc}")
+            await cl.ErrorMessage(content="No pude actualizar la bitácora. Intentá nuevamente.").send()
+            await avatar_alert()
+            return
+        if revision.updated and revision.entry is not None:
+            journal.entry = revision.entry
+            await _send_journal_message(format_journal(journal.entry, note=revision.reply), with_confirm=True)
+        else:
+            await _send_journal_message(revision.reply, with_confirm=True)
+        return
+
+    # Fase de entrevista: el modelo decide qué falta preguntar.
+    journal.add_user(text)
+    try:
+        if not journal.must_finish:
+            turn = await next_interview_turn(settings, journal.transcript_text)
+            if not turn.ready:
+                journal.add_assistant(turn.message)
+                await _send_journal_message(turn.message)
+                return
+        journal.entry = await generate_journal(settings, journal.transcript_text)
+    except Exception as exc:
+        logger.error(f"Error en la bitácora: {exc}")
+        await cl.ErrorMessage(content="No pude continuar con la bitácora. Intentá nuevamente.").send()
+        await avatar_alert()
+        return
+
+    journal.reviewing = True
+    await _send_journal_message(format_journal(journal.entry), with_confirm=True)
+
+
+# --------------------------------------------------------------------------- #
+# Laboratorio de empatía: helpers y actions
+# --------------------------------------------------------------------------- #
+def _empathy_actions(with_evaluate: bool) -> list[cl.Action]:
+    actions = []
+    if with_evaluate:
+        actions.append(cl.Action(
+            name="empathy_evaluate",
+            payload={},
+            label="Evaluar empatía",
+            tooltip="Evalúa tu práctica de empatía hasta ahora",
+            icon="check",
+        ))
+    actions.append(cl.Action(
+        name="empathy_exit",
+        payload={},
+        label="Salir del laboratorio",
+        tooltip="Termina la práctica y vuelve a la conversación normal",
+        icon="x",
+    ))
+    return actions
+
+
+async def _clear_empathy_actions() -> None:
+    previous = cl.user_session.get("empathy_msg")
+    if previous is not None:
+        try:
+            await previous.remove_actions()
+        except Exception as exc:  # el mensaje pudo haberse eliminado
+            logger.debug(f"No se pudieron quitar las actions de empatía: {exc}")
+        cl.user_session.set("empathy_msg", None)
+
+
+async def _send_empathy_message(
+    content: str, emotion: str | None = None, with_evaluate: bool = False
+) -> None:
+    await _clear_empathy_actions()
+    avatar = avatar_signal(emotion=emotion) if emotion else avatar_signal()
+    message = cl.Message(
+        content=content,
+        elements=[avatar],
+        actions=_empathy_actions(with_evaluate),
+    )
+    await message.send()
+    cl.user_session.set("empathy_msg", message)
+
+
+@cl.action_callback("empathy_evaluate")
+async def on_empathy_evaluate(action: cl.Action) -> None:
+    empathy_lab = cl.user_session.get("empathy_lab")
+    await _clear_empathy_actions()  # evita dobles clics mientras se evalúa
+    if not isinstance(empathy_lab, EmpathyLab):
+        await cl.Message(
+            content="No hay un laboratorio de empatía activo.",
+            elements=[avatar_signal(emotion="failed")],
+        ).send()
+        return
+    try:
+        evaluation = await empathy_lab.evaluate()
+    except ValueError as exc:
+        await _send_empathy_message(str(exc), emotion="failed", with_evaluate=empathy_lab.active)
+        return
+    except Exception as exc:
+        logger.error(f"Error al evaluar la empatía: {exc}")
+        await cl.ErrorMessage(content="No pude evaluar la práctica. Intentá nuevamente.").send()
+        await avatar_alert()
+        await _send_empathy_message("Podés seguir practicando o volver a evaluar.", with_evaluate=True)
+        return
+    await _send_empathy_message(
+        format_empathy_evaluation(evaluation), emotion="achievement", with_evaluate=True
+    )
+
+
+@cl.action_callback("empathy_exit")
+async def on_empathy_exit(action: cl.Action) -> None:
+    await _clear_empathy_actions()
+    cl.user_session.set("empathy_lab", None)
+    await cl.Message(
+        content="Saliste del laboratorio de empatía.",
+        elements=[avatar_signal()],
+    ).send()
+
+
 @cl.on_message
 async def main(msg: cl.Message) -> None:
+    # Cualquier otro comando sale de la bitácora; "Bitácora" la reinicia.
+    if msg.command and msg.command != "Bitácora":
+        await _clear_journal_actions()
+        cl.user_session.set("journal", None)
+
     if msg.command == "Bitácora":
-        cl.user_session.set("journal", JournalSession())
-        await cl.Message(
-                content=(
-                    "Iniciemos una bitácora privada y temporal. La información se mantiene "
-                    "solo durante esta sesión y no se guarda en el servidor.\n\n"
-                    "Te voy a hacer algunas preguntas. No incluyas datos que no quieras "
-                    "presentar ante la oficina de convivencia.\n\n"
-                    f"{JournalSession().current_question}"
-                ),
-                elements=[avatar_signal()]
-            ).send()
+        await _clear_empathy_actions()
+        cl.user_session.set("empathy_lab", None)
+        await _clear_journal_actions()
+        journal = JournalSession.start()
+        cl.user_session.set("journal", journal)
+        await _send_journal_message(
+            "Iniciemos una bitácora privada y temporal. La información se mantiene "
+            "solo durante esta sesión y no se guarda en el servidor.\n\n"
+            "No incluyas datos que no quieras presentar ante la oficina de convivencia.\n\n"
+            f"{journal.transcript[0][1]}"
+        )
         return
 
     journal = cl.user_session.get("journal")
     if isinstance(journal, JournalSession):
-        if journal.reviewing:
-            if msg.content.strip().lower() in {"confirmar", "descargar"}:
-                if journal.entry is None:
-                    await cl.Message(content="No hay un resumen listo para descargar.",
-                            elements=[avatar_signal(emotion="failed")]
-                    ).send()
-                    return
-                file = cl.File(
-                    name="bitacora_hechos.docx",
-                    content=journal_docx(journal.entry),
-                    display="inline",
-                )
-                await cl.Message(
-                    content="Tu bitácora está lista para descargar. No se guardó en el servidor.",
-                    elements=[file, avatar_signal(emotion="archievement")],
-                ).send()
-                cl.user_session.set("journal", None)
-                return
-            if journal.correction(msg.content):
-                try:
-                    journal.entry = await generate_journal(AgentSettings.load(), journal.answers)
-                except Exception as exc:
-                    logger.error(f"Error al actualizar la bitácora: {exc}")
-                    await cl.ErrorMessage(
-                        content="No pude actualizar la bitácora. Intentá nuevamente."
-                    ).send()
-                    await avatar_alert()
-                    return
-                await cl.Message(content=format_journal(journal.entry), elements=[avatar_signal()]).send()
-                return
-
-        journal.record(msg.content)
-        if not journal.complete:
-            await cl.Message(content=journal.current_question, elements=[avatar_signal()]).send()
-            return
-        try:
-            journal.entry = await generate_journal(AgentSettings.load(), journal.answers)
-        except Exception as exc:
-            logger.error(f"Error al generar la bitácora: {exc}")
-            await cl.ErrorMessage(
-                content="No pude generar el resumen. Intentá nuevamente."
-            ).send()
-            await avatar_alert()
-            return
-        journal.reviewing = True
-        await cl.Message(content=format_journal(journal.entry), elements=[avatar_signal()]).send()
+        await _handle_journal_message(journal, msg.content)
         return
 
     empathy_lab = cl.user_session.get("empathy_lab")
 
     if msg.command == "Empatía":
+        await _clear_empathy_actions()
         cl.user_session.set("empathy_lab", EmpathyLab(AgentSettings.load()))
-        await cl.Message(
-            content="Describí una conversación difícil que quieras practicar. "
-                    "Es una simulación ficticia: no incluyas datos personales reales.",
-            elements=[avatar_signal()]
-        ).send()
-        return
-
-    if msg.command == "Evaluar empatía":
-        if not isinstance(empathy_lab, EmpathyLab):
-            await cl.Message(content="No hay un laboratorio de empatía activo.", elements=[avatar_signal(emotion="failed")]).send()
-            return
-        try:
-            evaluation = await empathy_lab.evaluate()
-        except ValueError as exc:
-            await cl.Message(content=str(exc), elements=[avatar_signal(emotion="failed")]).send()
-        else:
-            await cl.Message(content=format_empathy_evaluation(evaluation), elements=[avatar_signal(emotion="achievement")]).send()
-        return
-
-    if msg.command == "Salir de empatía":
-        if not isinstance(empathy_lab, EmpathyLab):
-            await cl.Message(content="No hay un laboratorio de empatía activo.", elements=[avatar_signal(emotion="failed")]).send()
-            return
-        cl.user_session.set("empathy_lab", None)
-        await cl.Message(content="Saliste del laboratorio de empatía.", elements=[avatar_signal()]).send()
+        await _send_empathy_message(
+            "Describí una conversación difícil que quieras practicar. "
+            "Es una simulación ficticia: no incluyas datos personales reales."
+        )
         return
 
     if isinstance(empathy_lab, EmpathyLab):
@@ -203,20 +342,18 @@ async def main(msg: cl.Message) -> None:
             try:
                 empathy_lab.begin(msg.content)
             except ValueError as exc:
-                await cl.Message(content=str(exc), elements=[avatar_signal(emotion="failed")]).send()
+                await _send_empathy_message(str(exc), emotion="failed")
                 return
-            await cl.Message(
-                content="Listo. Yo voy a interpretar a la otra persona. "
-                        "Escribí tu primera respuesta; cuando termines, usá `/Evaluar empatía`.",
-                elements=[avatar_signal(emotion="curious")]
-            ).send()
+            await _send_empathy_message(
+                "Listo. Yo voy a interpretar a la otra persona. "
+                "Escribí tu primera respuesta; cuando termines, usá el botón **Evaluar empatía**.",
+                emotion="curious",
+                with_evaluate=True,
+            )
             return
         try:
             response = await empathy_lab.respond(msg.content)
-            await cl.Message(
-                content=response,
-                elements=[avatar_signal()]
-            ).send()
+            await _send_empathy_message(response, with_evaluate=True)
         except Exception as e:
             logger.error(f"Error en el laboratorio de empatía: {e}")
             await cl.ErrorMessage(content="No pude continuar la práctica. Intentá nuevamente.").send()
