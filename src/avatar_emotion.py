@@ -29,8 +29,8 @@ _REACTIONS: dict[str, tuple[str, str | None, int]] = {
 
 def avatar_signal(agent: ConversationalAgent | None = None, emotion: str | None = None, text: str | None = None) -> cl.CustomElement:
     """Elemento invisible que le indica al avatar cómo reaccionar."""
-    if emotion is None and agent:
-        emotion = agent.last_analysis.get("emotion") 
+    if emotion is None and agent is not None:
+        emotion = agent.last_analysis.get("emotion")
     state, face, hold_ms = _REACTIONS.get(emotion, _REACTIONS["neutral"])
     props = {"state": state, "face": face, "hold_ms": hold_ms, "ts": int(time.time() * 1000)}
     if text is not None:

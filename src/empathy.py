@@ -2,13 +2,16 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import logging
+from time import perf_counter
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 
 from .config import AgentSettings, configure_logging, EMPATHY_LAB_SETTINGS
-from .safety import safety_from_re
+from .safety import safety_from_re, safety_from_llm
+from .tools import analizar_situacion
+from .metrics import Metrics
 
 # Crear logger para el laboratorio de empatía
 configure_logging()
@@ -73,20 +76,21 @@ Respondé solamente con la intervención del PERSONAJE. No escribas las etiqueta
 "Practicante", "Personaje", "Coordinador" ni explicaciones sobre el ejercicio.
 """
 
-EVALUATION_PROMPT = """Evaluá la empatía del usario (PRACTICANTE) en una convcersación ficticia.
+EVALUATION_PROMPT = """Evaluá que tan bueno fue el usuario en expresar su inquietud y comunicar sus deseos o emociones.
 Usá exclusivamente la conversación incluida entre las etiquetas <conversacion>.
 No diagnostiques ni evalúes la personalidad. Puntúa cada criterio de 1 a 5 y da
 devoluciones accionables, cálidas y breves. No inventes hechos que no aparezcan.
+Solo evaluá al practicante, no al personaje.
 
-Sé exigente pero justo: si la persona no valida, no refleja ni hace preguntas abiertas, no le des un 5. \
-Si la persona valida o refleja, pero juzga o da consejos apresurados, no le des un 5.
+Sé exigente pero justo: si el practicante no valida, no refleja ni hace preguntas abiertas, no le des un 5. \
+Si el practicante valida o refleja, pero juzga o da consejos apresurados, no le des un 5.
 
 Criterios:
-- validation: valida la emoción sin minimizarla.
-- reflection: refleja o parafrasea lo que la otra persona expresó.
-- open_questions: usa preguntas abiertas, pertinentes y no invasivas.
-- non_judgment: evita culpar, juzgar, presionar o dar respuestas apresuradas.
-- guidance: propone próximos pasos apropiados solo cuando corresponde.
+- validation: el practicante valida la emoción del personaje .
+- reflection: el usuario refleja o parafrasea lo que el personaje expresó.
+- open_questions: el practicante usa preguntas abiertas, pertinentes y no invasivas.
+- non_judgment: el usuario evita culpar, juzgar, presionar o dar respuestas apresuradas.
+- guidance: el usuario propone próximos pasos apropiados solo cuando corresponde.
 
 Además, escribí una devolución breve (5 a 7 frases) \
 en voseo, cálida y concreta, incluyendo:
@@ -137,6 +141,7 @@ class EmpathyLab:
     scenario: str | None = None
     turns: list[tuple[str, str]] = field(default_factory=list)
     evaluation: EmpathyEvaluation | None = None
+    metrics: Metrics = field(default_factory=Metrics)
 
     @property
     def active(self) -> bool:
@@ -161,14 +166,29 @@ class EmpathyLab:
         logger.info(f"Mensaje recibido: {message}")
         if not self.scenario:
             return "No hay una práctica activa."
+        started_at = perf_counter()
 
-        safety = safety_from_re(message)
-        if safety.level == "urgent":
+        def _safe_response(safety) -> str:
             self.evaluation = None
             self.scenario = None
             self.turns.clear()
             logger.warning(f"Mensaje marcado como urgente: {message} | Razón: {safety.reason}")
+            self.metrics.observe(started_at, urgent=True, evidence_hits=0)
             return safety.response or "Buscá ayuda humana inmediata."
+
+        safety = safety_from_re(message)
+        if safety.level == "urgent":
+            return _safe_response(safety)
+
+        # 1. Analizar la situación con NLP y registrar métricas
+        started_at_nlp = perf_counter()
+        analysis = await analizar_situacion.ainvoke({"text": message})
+        self.metrics.observe_tool(started_at_nlp, "nlp")
+        self.metrics.mark_trace("nlp")
+
+        safety = safety_from_llm(analysis=analysis)
+        if safety.level == "urgent":
+            return _safe_response(safety)
 
         if self.turns:
             self.evaluation = await self.evaluate()
@@ -179,6 +199,7 @@ class EmpathyLab:
             [("system", SIMULATION_PROMPT), ("human", "{message}")]
         )
         llm = ChatOpenAI(model=self.settings.model, temperature=0.5, api_key=self.settings.api_key)
+        started_at_llm = perf_counter()
         response = await (prompt | llm).ainvoke(
             {
                 "scenario": self.scenario,
@@ -188,12 +209,16 @@ class EmpathyLab:
                 "behavior": behavior
             }
         )
+        self.metrics.observe_tool(started_at_llm, "llm")
+        self.metrics.mark_trace("llm")
         reply = str(response.content)
         logger.info(f"Respuesta generada: {reply}")
         self.turns.extend([("Practicante", message), ("Persona", reply)])
+        self.metrics.observe(started_at, urgent=False, evidence_hits=0)
         return reply
 
     async def evaluate(self) -> EmpathyEvaluation:
+        started_at = perf_counter()
         if not self.scenario or not self.turns:
             raise ValueError("No hay una práctica activa para evaluar")
 
@@ -205,6 +230,8 @@ class EmpathyLab:
             EmpathyEvaluation, method="json_schema"
         )
         evaluation = await evaluator.ainvoke({"transcript": self._transcript()})
+        self.metrics.observe_tool(started_at, "llm")
+        self.metrics.mark_trace("llm")
         logger.info(f"Evaluación generada: {evaluation}")
         self.evaluation = evaluation
         return evaluation

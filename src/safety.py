@@ -1,5 +1,14 @@
 from dataclasses import dataclass
 import re
+import unicodedata
+
+def _norm(texto: str) -> str:
+    t = unicodedata.normalize("NFKC", texto)                       # unifica formas Unicode
+    t = "".join(c for c in t if unicodedata.category(c) != "Cf")   # quita caracteres invisibles
+    t = t.casefold()                                               # minúsculas
+    t = unicodedata.normalize("NFKD", t)
+    t = "".join(c for c in t if not unicodedata.combining(c))      # sin tildes (ñ -> n)
+    return re.sub(r"\s+", " ", t).strip()
 
 @dataclass(frozen=True)
 class SafetyResult:
@@ -38,7 +47,7 @@ def safety_from_llm(analysis: dict) -> SafetyResult:
             reason="llm_detected_emergency",
             response=(
                 "Lo que contás puede implicar un riesgo inmediato. Si hay peligro, "
-                "llamá ahora al 911 (Argentina) o a emergencias de tu localidad. "
+                "llamá ahora al 911 (línea internacional para cualquier emergencia). "
                 "No dejes sola a la persona: buscá a alguien de confianza o a un "
                 "profesional y no prometas guardar el secreto. Decime en qué "
                 "localidad estás para buscar un recurso oficial."
@@ -47,7 +56,7 @@ def safety_from_llm(analysis: dict) -> SafetyResult:
     return SafetyResult(level="normal", reason="llm_no_emergency_detected")
 
 def safety_from_re(text: str) -> SafetyResult:
-    normalized = text.casefold()
+    normalized = _norm(text)
     for pattern in _URGENT_PATTERNS:
         if re.search(pattern, normalized):
             return SafetyResult(
@@ -55,7 +64,7 @@ def safety_from_re(text: str) -> SafetyResult:
                 reason=f"possible_immediate_danger: {pattern}",
                 response=(
                     "Lo que contás puede implicar un riesgo inmediato. Si hay peligro, "
-                    "llamá ahora al 911 (Argentina) o a emergencias de tu localidad. "
+                    "llamá ahora al 911 (línea internacional para cualquier emergencia). "
                     "No dejes sola a la persona: buscá a alguien de confianza o a un "
                     "profesional y no prometas guardar el secreto. Decime en qué "
                     "localidad estás para buscar un recurso oficial."

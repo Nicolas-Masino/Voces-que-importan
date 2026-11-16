@@ -143,7 +143,7 @@ def ingestar() -> None:
 
 
 # ----------------------------------------------------------------- recuperación
-def buscar_evidencia(consulta: str, topico: str | None = None, k: int = 4) -> dict:
+def buscar_evidencia(consulta: str, topico: str | None = None, k: int = 4, threshold: float = RAG_SETTINGS.threshold) -> dict:
     """
     Devuelve {'resultados': [...], 'filtro_aplicado': bool}.
     Si el filtro por tópico no da resultados suficientes, reintenta sin filtro
@@ -156,7 +156,7 @@ def buscar_evidencia(consulta: str, topico: str | None = None, k: int = 4) -> di
         salida = []
         for doc, distancia in pares:
             relevancia = round(1 - distancia, 3)
-            if relevancia >= RAG_SETTINGS.threshold: # documentos por debajo del umbral no se citan
+            if relevancia >= threshold: # documentos por debajo del umbral no se citan
                 salida.append({"texto": doc.page_content, "relevancia": relevancia, **doc.metadata})
         return salida
 

@@ -67,7 +67,8 @@ class ConversationalAgent:
         self.history: list[dict] = []  # Historial en formato de mensajes de OpenAI
         self.metrics = Metrics()
         self.last_sources: list[str] = []
-        self.last_analysis: dict | None = None
+        self.last_evidence: list[dict] = []
+        self.last_analysis: dict = {}
 
     async def respond(
         self,
@@ -91,6 +92,7 @@ class ConversationalAgent:
         logger.info(f"Mensaje recibido: {message}")
         started_at = perf_counter()
         self.last_sources = []
+        self.last_evidence = []
         
         # 1. Validación de seguridad en paralelo: aplica un guardrail rapido y local basado
         # en regex y una segunda capa basado en el LLM para mayor análisis
@@ -100,7 +102,10 @@ class ConversationalAgent:
 
         # 2. Realizar analisis de NLP y evaluar seguridad en contexto
         await report("analysis", "started")
+        started_at_analysis = perf_counter()
         analysis = await analizar_situacion.ainvoke({"text": message})
+        self.metrics.observe_tool(started_at_analysis, "nlp")
+        self.metrics.mark_trace("nlp")
         await report("analysis", "completed")
         self.last_analysis = analysis
         logger.info(f"Análisis de la situación: {analysis}")
@@ -113,7 +118,11 @@ class ConversationalAgent:
         resources = {}
         if analysis.get("intent") == "pedir consejo":
             await report("evidence", "started")
+            started_at_evidence = perf_counter()
             evidence = await consultar_evidencia.ainvoke({"consulta": message, "topico": analysis.get("topic")})
+            self.last_evidence = evidence.get("results", [])
+            self.metrics.observe_tool(started_at_evidence, "rag")
+            self.metrics.mark_trace("rag")
             await report("evidence", "completed")
             logger.info(f"Evidencia encontrada: {evidence.get('results')}")
             self.last_sources.extend(
@@ -126,7 +135,10 @@ class ConversationalAgent:
             )
         if analysis.get("intent") == "buscar orientación":
             await report("resources", "started")
+            started_at_resources = perf_counter()
             resources = await orientar_recursos.ainvoke({"topico": analysis.get("topic"), "ambito": analysis.get("scope")})
+            self.metrics.mark_trace("resources")
+            self.metrics.observe_tool(started_at_resources, "resources")
             await report("resources", "completed")
             logger.info(f"Recursos encontrados: {resources.get('resources')}")
             if resources.get("resources"):
@@ -158,7 +170,10 @@ class ConversationalAgent:
 
         try:
             # 6. Llamada oficial a la API de OpenAI
+            started_at_llm = perf_counter()
             res = await chain.ainvoke({"text": message, "history": history_messages, "system": system_prompt})
+            self.metrics.observe_tool(started_at_llm, "llm")
+            self.metrics.mark_trace("llm")
             response = res.content
 
         except Exception as e:

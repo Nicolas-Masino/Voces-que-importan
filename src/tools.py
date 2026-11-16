@@ -55,7 +55,8 @@ def orientar_recursos(
             "no tenés un recurso verificado y sugerile consultar a la oficina de "
             "convivencia o bienestar de su universidad."
         )
- 
+        return out
+
     bloques = []
     for r in out["resources"]:
         bloques.append(
