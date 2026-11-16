@@ -1,0 +1,119 @@
+{
+  "criterio": "Una respuesta cuenta como cubierta si contiene fuente, año de cuatro dígitos y página, y la cita coincide con un resultado recuperado.",
+  "consultas": [
+    {
+      "id": "rag01",
+      "consulta": "¿Qué proporción de estudiantes universitarios informó cybervictimización?",
+      "respuesta": "Entiendo que te preocupa la situación de la cybervictimización entre estudiantes universitarios. Sin embargo, no tengo datos específicos sobre la proporción de estudiantes que han informado sobre este tema. Es un asunto serio y es importante abordarlo con atención. Si necesitas más información o apoyo, no dudes en buscar recursos en tu universidad o hablar con alguien de confianza. Estoy aquí para ayudarte a ordenar tus pensamientos.",
+      "error": null,
+      "citas_detectadas": [],
+      "cita_corresponde_a_resultado_recuperado": false,
+      "resultados_recuperados": []
+    },
+    {
+      "id": "rag02",
+      "consulta": "¿Qué describe el Convenio 190 sobre violencia y acoso en el trabajo?",
+      "respuesta": "El Convenio 190 de la OIT (Organización Internacional del Trabajo) aborda la violencia y el acoso en el mundo del trabajo, estableciendo un marco para prevenir y abordar estas situaciones. Describe la violencia y el acoso como un problema que afecta la dignidad, la salud y la seguridad de los trabajadores, y establece la responsabilidad de los empleadores para crear un entorno laboral seguro y saludable. Además, promueve la igualdad de género y el respeto en el trabajo, y sugiere que se implementen políticas y procedimientos claros para abordar estos problemas.\n\nSi necesitas más información sobre cómo se relaciona esto con la convivencia universitaria o cómo se pueden aplicar estos principios en un entorno académico, estaré encantada de ayudarte a ordenar tus pensamientos.",
+      "error": null,
+      "citas_detectadas": [],
+      "cita_corresponde_a_resultado_recuperado": false,
+      "resultados_recuperados": []
+    },
+    {
+      "id": "rag03",
+      "consulta": "¿Qué condiciones de trabajo dignas se recomiendan para el personal de educación superior?",
+      "respuesta": "Es comprensible que te preocupes por las condiciones de trabajo en la educación superior, ya que estas pueden impactar significativamente en el bienestar docente. Aunque no puedo proporcionar un listado específico de recomendaciones, es importante que las condiciones de trabajo incluyan aspectos como un ambiente seguro, apoyo profesional, oportunidades de desarrollo y un equilibrio entre la carga laboral y la vida personal.\n\nSi deseas profundizar en este tema, te sugiero consultar el Portal de docentes de la Universidad Católica Argentina, donde podrías encontrar información y recursos relevantes sobre el bienestar docente: [Portal de docentes de la universidad](https://uca.edu.ar/es/acceso-a-docentes). Estoy aquí para acompañarte en lo que necesites.",
+      "error": null,
+      "citas_detectadas": [],
+      "cita_corresponde_a_resultado_recuperado": false,
+      "resultados_recuperados": []
+    },
+    {
+      "id": "rag04",
+      "consulta": "¿Qué prácticas xenofóbicas se describen en Foz de Iguazú?",
+      "respuesta": "Entiendo que te preocupa la xenofobia y las prácticas discriminatorias. Sin embargo, no tengo información específica sobre las prácticas xenofóbicas en Foz de Iguazú. Es un tema delicado y puede ser útil registrar lo que has observado o experimentado. Te invito a usar la 'Bitácora' para comunicarlo en la oficina de convivencia, donde podrán brindarte el apoyo necesario. Estoy aquí para escucharte y acompañarte en lo que necesites.",
+      "error": null,
+      "citas_detectadas": [],
+      "cita_corresponde_a_resultado_recuperado": false,
+      "resultados_recuperados": []
+    },
+    {
+      "id": "rag05",
+      "consulta": "¿Qué dice el mapa sobre experiencias de discriminación?",
+      "respuesta": "Entiendo que quieras información sobre experiencias de discriminación, y es completamente válido que busques claridad en este tema. Sin embargo, no tengo acceso a un mapa específico sobre esas experiencias. \n\nSi has vivido o presenciado alguna situación de discriminación, te invito a que la registres en una 'Bitácora'. Esto puede ser útil para comunicarlo en la oficina de convivencia de tu universidad. Es importante que tu voz sea escuchada y que se tomen las medidas adecuadas. Estoy aquí para acompañarte en lo que necesites.",
+      "error": null,
+      "citas_detectadas": [],
+      "cita_corresponde_a_resultado_recuperado": false,
+      "resultados_recuperados": []
+    },
+    {
+      "id": "rag06",
+      "consulta": "¿Qué recomendaciones comunica la OMS para informar sobre suicidio?",
+      "respuesta": "Entiendo que este es un tema delicado y puede generar muchas emociones. La Organización Mundial de la Salud (OMS) proporciona varias recomendaciones para informar sobre el suicidio de manera responsable. Algunas de estas recomendaciones incluyen:\n\n1. **Evitar el sensacionalismo**: No exagerar los detalles sobre el suicidio o presentar el acto como algo heroico.\n2. **No glorificar el suicidio**: Evitar retratarlo como una solución a los problemas.\n3. **Incluir información sobre ayuda**: Proporcionar recursos y líneas de apoyo para quienes puedan estar en crisis.\n4. **Usar un lenguaje sensible**: Ser cuidadoso con las palabras para no estigmatizar a las personas que han tenido pensamientos suicidas.\n\nSi estás buscando más información o apoyo sobre este tema, no dudes en compartir lo que sientes. Estoy aquí para escucharte.",
+      "error": null,
+      "citas_detectadas": [],
+      "cita_corresponde_a_resultado_recuperado": false,
+      "resultados_recuperados": []
+    },
+    {
+      "id": "rag07",
+      "consulta": "¿Qué protocolo aplica ante el acoso entre estudiantes en Navarra?",
+      "respuesta": "Entiendo que te preocupa el acoso entre estudiantes, y es completamente válido buscar información sobre esto. Sin embargo, no tengo acceso a protocolos específicos de Navarra. Te sugiero que contactes a la oficina de convivencia de tu institución, donde podrán orientarte sobre los procedimientos y recursos disponibles.\n\nSi te sientes cómodo, también podrías registrar la situación en una 'Bitácora' para comunicarla en la oficina de convivencia. Esto puede ser un primer paso importante para abordar el problema. Recuerda que es fundamental priorizar tu seguridad en cualquier acción que decidas tomar.",
+      "error": null,
+      "citas_detectadas": [],
+      "cita_corresponde_a_resultado_recuperado": false,
+      "resultados_recuperados": []
+    },
+    {
+      "id": "rag08",
+      "consulta": "Burlas por el acento y exclusión de una estudiante migrante, ¿qué evidencia hay?",
+      "respuesta": "Entiendo que esta situación puede generar mucha frustración y enojo. Las burlas por el acento y la exclusión pueden constituir actos de discriminación, lo cual es inaceptable en cualquier entorno, especialmente en el académico. \n\nEs importante que la estudiante afectada registre lo que está sucediendo. Te invito a utilizar el comando 'Bitácora' para documentar la situación y comunicarla en la oficina de convivencia de la universidad. Esto puede ayudar a que se tomen las medidas adecuadas.\n\nSi necesitas más información o apoyo, no dudes en preguntar. Estoy aquí para acompañarte.",
+      "error": null,
+      "citas_detectadas": [],
+      "cita_corresponde_a_resultado_recuperado": false,
+      "resultados_recuperados": []
+    },
+    {
+      "id": "rag09",
+      "consulta": "Capturas compartidas para hacer quedar mal a alguien en la cursada",
+      "respuesta": "Entiendo que te sientas frustrado por esta situación. Es realmente difícil lidiar con acciones que pueden perjudicar a otros, especialmente en un entorno académico donde todos deberían sentirse apoyados. ¿Cómo te afecta esto a ti y a tu experiencia en la cursada?",
+      "error": null,
+      "citas_detectadas": [],
+      "cita_corresponde_a_resultado_recuperado": false,
+      "resultados_recuperados": []
+    },
+    {
+      "id": "rag10",
+      "consulta": "Comentarios humillantes repetidos y protocolo de la universidad navarra",
+      "respuesta": "Lamento que estés pasando por una situación tan difícil. Los comentarios humillantes pueden ser muy dolorosos y afectar tu bienestar. Es importante que sepas que no estás solo en esto y que hay recursos disponibles para ayudarte.\n\nTe invito a que registres esta situación en una 'Bitácora'. Esto puede ser útil para comunicarlo en la oficina de convivencia de tu universidad, donde podrán orientarte sobre los pasos a seguir y cómo abordar el problema.\n\nSi sientes que necesitas apoyo inmediato, también puedes considerar contactar a la Línea 144, que ofrece atención a personas en situación de violencia de género: https://www.argentina.gob.ar/linea-144. \n\nRecuerda que tu bienestar es lo más importante.",
+      "error": null,
+      "citas_detectadas": [],
+      "cita_corresponde_a_resultado_recuperado": false,
+      "resultados_recuperados": []
+    },
+    {
+      "id": "rag14",
+      "consulta": "¿Qué procedimiento establece la Universidad de Navarra para proteger a quien consulta?",
+      "respuesta": "Lamento no poder proporcionar información específica sobre el procedimiento de la Universidad de Navarra. Sin embargo, es fundamental que cualquier persona que se sienta en riesgo o necesite apoyo busque ayuda en su institución. Te animo a que te comuniques directamente con ellos o consultes su página web para obtener información precisa sobre los recursos y procedimientos disponibles. Si necesitas orientación sobre cómo abordar una situación específica, aquí estoy para ayudarte a ordenar tus pensamientos.",
+      "error": null,
+      "citas_detectadas": [],
+      "cita_corresponde_a_resultado_recuperado": false,
+      "resultados_recuperados": []
+    },
+    {
+      "id": "rag15",
+      "consulta": "¿Qué relación se menciona entre agotamiento docente y condiciones laborales?",
+      "respuesta": "Es comprensible que te preocupe el agotamiento docente, ya que puede afectar tanto a la calidad de la enseñanza como al bienestar personal. El agotamiento docente a menudo está relacionado con condiciones laborales que pueden incluir la carga de trabajo excesiva, la falta de apoyo institucional, la presión por resultados y la escasez de recursos. Estas condiciones pueden contribuir a un ambiente estresante que impacta negativamente en la salud mental y emocional de los docentes.\n\nSi deseas explorar más sobre este tema o necesitas apoyo específico, no dudes en comentarlo. Estoy aquí para ayudarte.",
+      "error": null,
+      "citas_detectadas": [],
+      "cita_corresponde_a_resultado_recuperado": false,
+      "resultados_recuperados": []
+    }
+  ],
+  "resumen": {
+    "total": 12,
+    "exitosas": 12,
+    "fallos": 0,
+    "cobertura": 0.0
+  }
+}

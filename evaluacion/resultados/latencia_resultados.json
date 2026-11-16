@@ -1,0 +1,953 @@
+{
+  "n_corridas": 54,
+  "n_exitosas": 54,
+  "n_fallos": 0,
+  "resumen_ms": {
+    "nlp_ms": {
+      "n": 54,
+      "mediana_ms": 1033.880416500324,
+      "p95_ms": 1429.0827913457179
+    },
+    "rag_ms": {
+      "n": 54,
+      "mediana_ms": 0.0,
+      "p95_ms": 63.94609154885985
+    },
+    "resources_ms": {
+      "n": 54,
+      "mediana_ms": 0.6145625011413358,
+      "p95_ms": 0.7324915495701134
+    },
+    "llm_ms": {
+      "n": 54,
+      "mediana_ms": 2259.998187502788,
+      "p95_ms": 4007.8906124930677
+    },
+    "total_ms": {
+      "n": 54,
+      "mediana_ms": 3382.1692709971103,
+      "p95_ms": 6069.592083652242
+    }
+  },
+  "corridas": [
+    {
+      "repeticion": 1,
+      "id": "rag01",
+      "tipo": "rag",
+      "total_ms": 3457.841499999631,
+      "nlp_ms": 1284.8280830075964,
+      "rag_ms": 0.0,
+      "resources_ms": 0.720290991012007,
+      "llm_ms": 2169.664458007901,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "rag02",
+      "tipo": "rag",
+      "total_ms": 4411.6906249983,
+      "nlp_ms": 1023.8427500007674,
+      "rag_ms": 0.0,
+      "resources_ms": 0.5955839878879488,
+      "llm_ms": 3385.3987499896903,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "rag03",
+      "tipo": "rag",
+      "total_ms": 6951.0800410062075,
+      "nlp_ms": 1026.6314159962349,
+      "rag_ms": 0.0,
+      "resources_ms": 0.7243750005727634,
+      "llm_ms": 5921.903166003176,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "rag04",
+      "tipo": "rag",
+      "total_ms": 3479.563415996381,
+      "nlp_ms": 1027.1574590005912,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6162089994177222,
+      "llm_ms": 2450.025124999229,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "rag05",
+      "tipo": "rag",
+      "total_ms": 3184.5496250025462,
+      "nlp_ms": 1263.5777079995023,
+      "rag_ms": 0.0,
+      "resources_ms": 0.75758300954476,
+      "llm_ms": 1918.413708001026,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "rag06",
+      "tipo": "rag",
+      "total_ms": 4906.176041986328,
+      "nlp_ms": 1427.2190409974428,
+      "rag_ms": 0.0,
+      "resources_ms": 0.7600419921800494,
+      "llm_ms": 3476.1183749942575,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "rag07",
+      "tipo": "rag",
+      "total_ms": 3270.2079589944333,
+      "nlp_ms": 1021.1589169921353,
+      "rag_ms": 0.0,
+      "resources_ms": 0.5835420015500858,
+      "llm_ms": 2246.5999999985797,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "rag08",
+      "tipo": "rag",
+      "total_ms": 3279.930292002973,
+      "nlp_ms": 1027.6005420018919,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6667919951723889,
+      "llm_ms": 2249.695000005886,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "rag09",
+      "tipo": "rag",
+      "total_ms": 2869.2615409963764,
+      "nlp_ms": 1432.5440419925144,
+      "rag_ms": 0.0,
+      "resources_ms": 0.0,
+      "llm_ms": 1434.9591249920195,
+      "traza": {
+        "rag": false,
+        "resources": false,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "rag10",
+      "tipo": "rag",
+      "total_ms": 3885.735083007603,
+      "nlp_ms": 1017.3139999969862,
+      "rag_ms": 0.0,
+      "resources_ms": 0.46808300248812884,
+      "llm_ms": 2866.3819579960546,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "rag11",
+      "tipo": "rag",
+      "total_ms": 2863.8790830009384,
+      "nlp_ms": 1125.2262920024805,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6791250052629039,
+      "llm_ms": 1736.0410829860484,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "rag12",
+      "tipo": "rag",
+      "total_ms": 2865.557291996083,
+      "nlp_ms": 1224.43529200973,
+      "rag_ms": 0.0,
+      "resources_ms": 0.5929999897489324,
+      "llm_ms": 1638.7996250123251,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "rag13",
+      "tipo": "rag",
+      "total_ms": 3176.5936669980874,
+      "nlp_ms": 903.8299169915263,
+      "rag_ms": 0.0,
+      "resources_ms": 0.5984580056974664,
+      "llm_ms": 2270.30137499969,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "rag14",
+      "tipo": "rag",
+      "total_ms": 2752.228333003586,
+      "nlp_ms": 1124.7617909975816,
+      "rag_ms": 0.0,
+      "resources_ms": 0.5732499994337559,
+      "llm_ms": 1625.1047080004355,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "rag15",
+      "tipo": "rag",
+      "total_ms": 3823.1097499956377,
+      "nlp_ms": 1116.5846660005627,
+      "rag_ms": 0.0,
+      "resources_ms": 0.5886250000912696,
+      "llm_ms": 2704.083874996286,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "caso1",
+      "tipo": "escenario",
+      "total_ms": 8278.508625007817,
+      "nlp_ms": 1602.2190840012627,
+      "rag_ms": 4500.926042004721,
+      "resources_ms": 0.0,
+      "llm_ms": 2173.585666998406,
+      "traza": {
+        "rag": true,
+        "resources": false,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "caso2",
+      "tipo": "escenario",
+      "total_ms": 3464.0646250045393,
+      "nlp_ms": 1115.9253750083735,
+      "rag_ms": 60.06625000736676,
+      "resources_ms": 0.0,
+      "llm_ms": 2285.492583992891,
+      "traza": {
+        "rag": true,
+        "resources": false,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 1,
+      "id": "caso3",
+      "tipo": "escenario",
+      "total_ms": 3792.4602909915848,
+      "nlp_ms": 1125.4431660054252,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6744159909430891,
+      "llm_ms": 2664.2783749994123,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "rag01",
+      "tipo": "rag",
+      "total_ms": 2763.4281249920605,
+      "nlp_ms": 1229.5856249984354,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6358329992508516,
+      "llm_ms": 1531.3068329996895,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "rag02",
+      "tipo": "rag",
+      "total_ms": 3992.4285000015516,
+      "nlp_ms": 1229.1929589991923,
+      "rag_ms": 0.0,
+      "resources_ms": 0.7008340035099536,
+      "llm_ms": 2760.541875002673,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "rag03",
+      "tipo": "rag",
+      "total_ms": 6039.667083998211,
+      "nlp_ms": 1023.680541999056,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6299170054262504,
+      "llm_ms": 5013.310333000845,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "rag04",
+      "tipo": "rag",
+      "total_ms": 3693.0449589999625,
+      "nlp_ms": 1126.141375003499,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6450000073527917,
+      "llm_ms": 2564.267916008248,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "rag05",
+      "tipo": "rag",
+      "total_ms": 2960.0063750112895,
+      "nlp_ms": 1015.1790839881869,
+      "rag_ms": 0.0,
+      "resources_ms": 0.5141250003362074,
+      "llm_ms": 1942.3974160017679,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "rag06",
+      "tipo": "rag",
+      "total_ms": 3990.521500003524,
+      "nlp_ms": 1227.664125006413,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6190419953782111,
+      "llm_ms": 2760.239208000712,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "rag07",
+      "tipo": "rag",
+      "total_ms": 3173.657417006325,
+      "nlp_ms": 1024.7350840072613,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6713339971611276,
+      "llm_ms": 2146.428041989566,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "rag08",
+      "tipo": "rag",
+      "total_ms": 3378.120458990452,
+      "nlp_ms": 1026.7878750019008,
+      "rag_ms": 0.0,
+      "resources_ms": 0.637625009403564,
+      "llm_ms": 2348.825166001916,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "rag09",
+      "tipo": "rag",
+      "total_ms": 2558.0704169988167,
+      "nlp_ms": 1023.0453330004821,
+      "rag_ms": 0.0,
+      "resources_ms": 0.0,
+      "llm_ms": 1533.3105829922715,
+      "traza": {
+        "rag": false,
+        "resources": false,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "rag10",
+      "tipo": "rag",
+      "total_ms": 3581.4770420111017,
+      "nlp_ms": 1125.7955830078572,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6350409967126325,
+      "llm_ms": 2453.0504159920383,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "rag11",
+      "tipo": "rag",
+      "total_ms": 2500.4489999992074,
+      "nlp_ms": 1026.6981669992674,
+      "rag_ms": 0.0,
+      "resources_ms": 0.7295419927686453,
+      "llm_ms": 1471.0559169907356,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "rag12",
+      "tipo": "rag",
+      "total_ms": 2721.4438330120174,
+      "nlp_ms": 1288.6183749942575,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6603750080103055,
+      "llm_ms": 1430.2265000005718,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "rag13",
+      "tipo": "rag",
+      "total_ms": 2963.420624990249,
+      "nlp_ms": 1023.9147079992108,
+      "rag_ms": 0.0,
+      "resources_ms": 0.7177080115070567,
+      "llm_ms": 1936.7909590073396,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "rag14",
+      "tipo": "rag",
+      "total_ms": 2972.4388340109726,
+      "nlp_ms": 1130.4077500099083,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6120420002844185,
+      "llm_ms": 1839.4106670020847,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "rag15",
+      "tipo": "rag",
+      "total_ms": 3885.9925830038264,
+      "nlp_ms": 921.5588750084862,
+      "rag_ms": 0.0,
+      "resources_ms": 0.7306250045076013,
+      "llm_ms": 2961.767291999422,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "caso1",
+      "tipo": "escenario",
+      "total_ms": 3072.6624579983763,
+      "nlp_ms": 1027.3529590049293,
+      "rag_ms": 66.7176660062978,
+      "resources_ms": 0.0,
+      "llm_ms": 1977.0662920054747,
+      "traza": {
+        "rag": true,
+        "resources": false,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "caso2",
+      "tipo": "escenario",
+      "total_ms": 3689.552832991467,
+      "nlp_ms": 1028.8351250055712,
+      "rag_ms": 62.620708005852066,
+      "resources_ms": 0.0,
+      "llm_ms": 2596.414667001227,
+      "traza": {
+        "rag": true,
+        "resources": false,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 2,
+      "id": "caso3",
+      "tipo": "escenario",
+      "total_ms": 3578.9345419907477,
+      "nlp_ms": 1231.1370840034215,
+      "rag_ms": 0.0,
+      "resources_ms": 0.5939160037087277,
+      "llm_ms": 2345.0953749998007,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "rag01",
+      "tipo": "rag",
+      "total_ms": 2967.798625002615,
+      "nlp_ms": 1225.6564170093043,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6174589943839237,
+      "llm_ms": 1739.56045799423,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "rag02",
+      "tipo": "rag",
+      "total_ms": 4299.706082994817,
+      "nlp_ms": 1023.8724160008132,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6342080014292151,
+      "llm_ms": 3273.273999991943,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "rag03",
+      "tipo": "rag",
+      "total_ms": 6125.167083009728,
+      "nlp_ms": 1127.1065000037197,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6334999925456941,
+      "llm_ms": 4995.467624990852,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "rag04",
+      "tipo": "rag",
+      "total_ms": 3393.995625010575,
+      "nlp_ms": 1038.9257079950767,
+      "rag_ms": 0.0,
+      "resources_ms": 0.5215830024098977,
+      "llm_ms": 2352.852541996981,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "rag05",
+      "tipo": "rag",
+      "total_ms": 3481.51191600482,
+      "nlp_ms": 1121.4154589979444,
+      "rag_ms": 0.0,
+      "resources_ms": 0.7359579904004931,
+      "llm_ms": 2357.2139169991715,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "rag06",
+      "tipo": "rag",
+      "total_ms": 4401.174375001574,
+      "nlp_ms": 1023.780582996551,
+      "rag_ms": 0.0,
+      "resources_ms": 0.7099579961504787,
+      "llm_ms": 3374.7055410058238,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "rag07",
+      "tipo": "rag",
+      "total_ms": 3169.742625002982,
+      "nlp_ms": 1023.5961670114193,
+      "rag_ms": 0.0,
+      "resources_ms": 0.5840420053573325,
+      "llm_ms": 2143.494040996302,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "rag08",
+      "tipo": "rag",
+      "total_ms": 3685.823749998235,
+      "nlp_ms": 1128.7097500025993,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6801660056225955,
+      "llm_ms": 2554.4627500057686,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "rag09",
+      "tipo": "rag",
+      "total_ms": 2663.0672500032233,
+      "nlp_ms": 924.3425419990672,
+      "rag_ms": 0.0,
+      "resources_ms": 0.0,
+      "llm_ms": 1736.712334008189,
+      "traza": {
+        "rag": false,
+        "resources": false,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "rag10",
+      "tipo": "rag",
+      "total_ms": 3385.6718329916475,
+      "nlp_ms": 920.8383750083158,
+      "rag_ms": 0.0,
+      "resources_ms": 0.5839170044055209,
+      "llm_ms": 2462.494958002935,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "rag11",
+      "tipo": "rag",
+      "total_ms": 2959.8577079887036,
+      "nlp_ms": 1221.179416999803,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6129160028649494,
+      "llm_ms": 1736.2153750000289,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "rag12",
+      "tipo": "rag",
+      "total_ms": 3173.5784170014085,
+      "nlp_ms": 1724.6723749994999,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6015410035615787,
+      "llm_ms": 1446.4040839957306,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "rag13",
+      "tipo": "rag",
+      "total_ms": 3274.634374989546,
+      "nlp_ms": 1027.0522909995634,
+      "rag_ms": 0.0,
+      "resources_ms": 0.5377919878810644,
+      "llm_ms": 2245.249415995204,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "rag14",
+      "tipo": "rag",
+      "total_ms": 2662.5547500007087,
+      "nlp_ms": 1023.4262500016484,
+      "rag_ms": 0.0,
+      "resources_ms": 0.4914590099360794,
+      "llm_ms": 1636.933499990846,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "rag15",
+      "tipo": "rag",
+      "total_ms": 4094.29758299666,
+      "nlp_ms": 1023.3257499930914,
+      "rag_ms": 0.0,
+      "resources_ms": 0.6598750042030588,
+      "llm_ms": 3068.435666995356,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "caso1",
+      "tipo": "escenario",
+      "total_ms": 3378.666709002573,
+      "nlp_ms": 1228.640417000861,
+      "rag_ms": 65.77345800178591,
+      "resources_ms": 0.0,
+      "llm_ms": 2082.876665997901,
+      "traza": {
+        "rag": true,
+        "resources": false,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "caso2",
+      "tipo": "escenario",
+      "total_ms": 3887.2611669939943,
+      "nlp_ms": 1023.4297919960227,
+      "rag_ms": 62.96212499728426,
+      "resources_ms": 0.0,
+      "llm_ms": 2799.325041996781,
+      "traza": {
+        "rag": true,
+        "resources": false,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    },
+    {
+      "repeticion": 3,
+      "id": "caso3",
+      "tipo": "escenario",
+      "total_ms": 2970.5357079947134,
+      "nlp_ms": 1026.7654999915976,
+      "rag_ms": 0.0,
+      "resources_ms": 0.5864159902557731,
+      "llm_ms": 1941.228958996362,
+      "traza": {
+        "rag": false,
+        "resources": true,
+        "nlp": true,
+        "llm": true
+      },
+      "error": null
+    }
+  ],
+  "escenarios_archivo": "/Users/nicolas/Documents/Chatbot/evaluacion/datos/escenarios.md"
+}

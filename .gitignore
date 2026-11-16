@@ -220,4 +220,5 @@ frontend/node_modules/
 
 # files
 *.pdf
+demo/
 .files/

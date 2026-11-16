@@ -1,0 +1,39 @@
+{
+  "fecha": "2026-11-16T04:18:57.527871+00:00",
+  "modelo_llm": "gpt-4o-mini",
+  "temperatura": {
+    "analisis": 0,
+    "generacion": 0.3
+  },
+  "modelo_embeddings": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "corpus": [
+    "badellino_salud_mental_universitarios_argentina_2025.pdf: sha256 7e4e0eb1c07b1104521dc21deb0890aabe8c4f6cff93d9504c77a142d6aaab79",
+    "guizardi_mardones_xenofobia_foz_2020.pdf: sha256 f56d47649f2980578111959d85ac6d6c599f9fd53569f4d259bbeb59542bdb97",
+    "inadi_mapa_discriminacion_2019.pdf: sha256 fa002c62d7c700692764bb009a6fcf5b35492c8070a13a20bcf69534a55d31ca",
+    "mahecha_burnout_docentes_universitarios_2023.pdf: sha256 12a47ba53f7b5105b0bfccbe294bb0e5f78bf0c8251f1dfa6c62a8cd19d22e56",
+    "oit_c190_eliminar_violencia_acoso.pdf: sha256 a32e2230e75c88097f32a586802be1fb7c2aa2d61a011986713da3c0931d5c96",
+    "oit_experiencias_violencia_acoso_trabajo_2023.pdf: sha256 2bd8b150e78773d47904c564dbbc1d8fb1becc060ca594a3b3cf0bc2a90ef077",
+    "oit_violencia_acoso_educacion.pdf: sha256 25e55ef0ff6ea16047cb02a8ec4d139115f4c2ad90cdf2a3aee1b01d58e2eba4",
+    "oms_comunicacion_responsable_suicidio_2023.pdf: sha256 33d2ab4090f9d64b8d33d3fc347b0ea9c851240bac118e1dbe90659e15140912",
+    "resett_putallaz_cyberbullying_universitarios_2018.pdf: sha256 7ce51851b4d73e9d8195bf3973bfed1c42d7635862aeb80da2939123633f5891",
+    "uba_protocolo_violencia_genero_2015.pdf: sha256 845ab3704f003ae36ab2e52fcb03218738a07a70ecd052e0a5db116c0791d622",
+    "unav_protocolo_acoso_entre_estudiantes_2025.pdf: sha256 ec6015efdcae0c8aba449c12a61ac6fd126a81adc088bb3d63bccbc6dcba15c7",
+    "unesco_iesalc_condiciones_personal.pdf: sha256 e2b559660ecbb5cc74648f3ad21badd4d023840170c62a68b46320cf1ff3a2ac",
+    "unlu_protocolo_violencia_genero_2022.pdf: sha256 09ae890ce767e6b8e4766e5a3f9784cf7b90aa26b19df8eb2fbf141202c5376f",
+    "who_suicide_worldwide_2021.pdf: sha256 26f11cc0b40ae221c4d41679e23b9d7dc168ffaa0a3380708c79389889615fc2"
+  ],
+  "indice_chroma": {
+    "chunk_size": 600,
+    "overlap": 100,
+    "umbral": 0.3
+  },
+  "versiones": "requirements.txt",
+  "equipo": "Darwin 25.4.0 / Python 3.12.16",
+  "red": "no registrada",
+  "commit": "8942bef110fa7de7f8f040f4c73b5ea296f1fa4e",
+  "comando": "evaluacion/scripts",
+  "interpretacion": {
+    "mediana": "percentil 50",
+    "p95": "percentil 95 lineal interpolado"
+  }
+}
