@@ -116,7 +116,7 @@ class ConversationalAgent:
         # 3. Ejecutar herramientas
         evidence = {}
         resources = {}
-        if analysis.get("intent") == "pedir consejo":
+        if analysis.get("intent") in ["pedir consejo", "buscar orientación"]:
             await report("evidence", "started")
             started_at_evidence = perf_counter()
             evidence = await consultar_evidencia.ainvoke({"consulta": message, "topico": analysis.get("topic")})
@@ -133,7 +133,7 @@ class ConversationalAgent:
                 f"{result.get('texto', '')}"
                 for result in evidence.get("results", [])
             )
-        if analysis.get("intent") == "buscar orientación":
+        if analysis.get("intent") in ["buscar orientación", "pedir consejo"]:
             await report("resources", "started")
             started_at_resources = perf_counter()
             resources = await orientar_recursos.ainvoke({"topico": analysis.get("topic"), "ambito": analysis.get("scope")})

@@ -53,7 +53,7 @@ pytest -q
 
 El core principal del agente se divide en dos instancias: (i) primero, un módulo de procesamiento de lenguaje natural potenciado con IA generativa que genera un análisis incluyendo, sentimiento (positivo, negativo o neutro), emoción (alegría, tristeza, enojo, miedo, sorpresa o disgusto), la intención (pedir consejo, desahogarse, buscar orientación o emergencia si se detecta situación de peligro), el tópico (bienestar docente, convivencia universitaria, bullying y acoso, xenofobia y discriminación, salud mental u otro), el ámbito (internacional, nacional, provincial, local o institucional) y la confianza (media, baja o alta); (ii) el agente en sí mismo que toma dicho análisis de NLP para enriquecer sus respuestas. 
 
-El módulo de NLP resulta de gran importancia, ya que no solo sirve para guiar la generación de respuestas, sino que también alimenta a las demás funcionalidades del chatbot, y determina comportamientos. En este sentido, el tono del agente es determinado en función de la emoción detectada en el usuario, las herramientas de consultar evidencia y orientar recursos se habilitan si la intención detectada es «pedir consejo» o «buscar orientación», respectivamente. Además, representa la segunda capa de seguridad si se percibe una emergencia.
+El módulo de NLP resulta de gran importancia, ya que no solo sirve para guiar la generación de respuestas, sino que también alimenta a las demás funcionalidades del chatbot, y determina comportamientos. En este sentido, el tono del agente es determinado en función de la emoción detectada en el usuario, las herramientas de consultar evidencia y orientar recursos se habilitan si la intención detectada es «pedir consejo» o «buscar orientación». Además, representa la segunda capa de seguridad si se percibe una emergencia.
 
 ### Sistema de Recuperación de Información Aumentada (RAG)
 
@@ -76,7 +76,7 @@ MANIFEST_EJEMPLO = {
 }
 ```
 
-El RAG solo se inicia si el módulo de NLP detecta que la intención es «pedir consejo».
+El RAG solo se inicia si el módulo de NLP detecta que la intención es «pedir consejo» o «buscar orientación.
 
 El corpus RAG no se reconstruye automáticamente, es necesario generar el índice chroma mediante:
 
@@ -88,7 +88,7 @@ El corpus RAG no se reconstruye automáticamente, es necesario generar el índic
 
 Dentro del archivo `config.json` se almacena todos los recursos disponibles que tiene el agente para orientar al usuario si así lo desea. Dichos, pueden ser tanto institucionales como globales y no dependen de un sistema RAG, sino de una búsqueda jerárquica y por prioridades. 
 
-Cuando el módulo de NLP detecta que la intención es «buscar orientación», se le habilita al agente las herramientas de buscar recursos, los cuales toman el tópico y alcance de la situación, y aplican un doble filtrado a los recursos: primero por tópicos y luego por orden de prioridad. Las jerarquías funcionan de la siguiente manera:
+Cuando el módulo de NLP detecta que la intención es «buscar orientación» o «pedir consejo», se le habilita al agente las herramientas de buscar recursos, los cuales toman el tópico y alcance de la situación, y aplican un doble filtrado a los recursos: primero por tópicos y luego por orden de prioridad. Las jerarquías funcionan de la siguiente manera:
 
 1. Si se detectó el ámbito, es decir, no es null y está dentro de la lista cerrada de scopes posibles, obtiene la prioridad del ámbito solicitado
 2. Elimina los recursos con ámbitos menores al solicitado considerando que internacional>institucional, es decir, si se solicita un ámbito provincial, el local y el institucional quedan descartados
