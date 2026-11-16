@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-11-16T04:18:57.527871+00:00",
+  "fecha": "2026-11-16T18:06:06.642899+00:00",
   "modelo_llm": "gpt-4o-mini",
   "temperatura": {
     "analisis": 0,
@@ -30,7 +30,7 @@
   "versiones": "requirements.txt",
   "equipo": "Darwin 25.4.0 / Python 3.12.16",
   "red": "no registrada",
-  "commit": "8942bef110fa7de7f8f040f4c73b5ea296f1fa4e",
+  "commit": "b565931f75f876be0a2a4c906a95272f36ea6169",
   "comando": "evaluacion/scripts",
   "interpretacion": {
     "mediana": "percentil 50",
